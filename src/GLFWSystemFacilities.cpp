@@ -7,10 +7,34 @@ GLFWSystemFacilities::GLFWSystemFacilities() : OGLSystemFacilities(0) {
   glfwInit(); 
 }
 
-bool GLFWSystemFacilities::CreateAndSetRenderContext(int width, int height, int r_bits, int g_bits, 
-                                                     int b_bits, int a_bits, int d_bits, int s_bits, bool fullscreen) {
+bool GLFWSystemFacilities::CreateAndSetRenderContext(int *width, int *height, int c_bits, int d_bits, int s_bits, 
+                                                     bool fullscreen) {
   int mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
-  int ret_val = glfwOpenWindow(width, height, r_bits, g_bits, b_bits, a_bits, d_bits, s_bits, mode);
+  int r_bits, g_bits, b_bits, a_bits;
+  switch (c_bits) {
+    case 32:
+      r_bits = 8;
+      g_bits = 8;
+      b_bits = 8;
+      a_bits = 8;
+      break;
+    case 24:
+      r_bits = 8;
+      g_bits = 8;
+      b_bits = 8;
+      a_bits = 0;
+      break;
+    case 16:
+      r_bits = 5;
+      g_bits = 6;
+      b_bits = 5;
+      a_bits = 0;
+      break;
+    default:
+      return false;
+  }
+
+  int ret_val = glfwOpenWindow(*width, *height, r_bits, g_bits, b_bits, a_bits, d_bits, s_bits, mode);
   return (ret_val == GL_TRUE) ? true : false;
 }
 

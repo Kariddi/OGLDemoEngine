@@ -1,18 +1,19 @@
 #ifndef __UBERNGINE_EAGLSYSTEMFACILITIES_H__
 #define __UBERNGINE_EAGLSYSTEMFACILITIES_H__
 
-#import <UIKit/UIView.h>
+#import <QuartzCore/CAEAGLLayer.h>
 #include <OGLSystemFacilities.h>
 
 namespace Uberngine {
 
 class EAGLSystemFacilities : public OGLSystemFacilities {
 
-  UIView *IosView;
+  CAEAGLLayer *EAGLLayer;
   EAGLContext *GLCtx;
 public:
-  EAGLSystemFacilities(UIView *view);
-  virtual bool CreateAndSetRenderContext(int width, int height, int r_bits, int g_bits, int b_bits, int a_bits, int d_bits, int s_bits, bool mode);
+  EAGLSystemFacilities(CAEAGLLayer *layer);
+  virtual bool CreateAndSetRenderContext(int *width, int *height, int c_bits, int d_bits, int s_bits, 
+                                         bool fullscreen);
   virtual void GetMousePosition(int *x, int *y);
   virtual bool GetPressedKey(int key);
   virtual float GetTime();

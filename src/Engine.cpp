@@ -43,6 +43,7 @@ void BaseEngine::UpdateScene() {
 
 //Renders the loaded scene
 void BaseEngine::RenderScene() {
+  glBindFramebuffer(GL_FRAMEBUFFER, Sys->GetDrawFramebufferObject());
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   if (DepthTestEnabled) {

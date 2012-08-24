@@ -2,7 +2,7 @@
 #define __UBERNGINE_ENGINE_H__
 #include <vector>
 #include <OGL.h>
-#include <SystemFacilities.h>
+#include <OGLSystemFacilities.h>
 #include <SystemFacilitiesFactory.h>
 #include <Defs.h>
 
@@ -24,10 +24,13 @@ protected:
   SceneList Scenes;
   int CurrScene;
   bool DepthTestEnabled;
-  SystemFacilities *Sys;
+  OGLSystemFacilities *Sys;
   float FrameTime;
   float PreviousFrameTime;
   float FrameTimeDelta;
+  int Width;
+  int Height;
+  short Depth;
   BaseEngine();
 public:
   virtual ~BaseEngine();
@@ -48,6 +51,10 @@ public:
   float GetFrameTime() { return FrameTime; }
   float GetPreviousFrameTime() { return PreviousFrameTime; }
   float GetFrameTimeDelta() { return FrameTimeDelta; }
+  float GetAspectRatio() { return (float) Width / Height; }
+  int GetWidth() { return Width; }
+  int GetHeight() { return Height; }
+  short GetDepth() { return Depth; }
   void StepSingleFrame();
   //Implements the engine Main Loop
   void MainLoop();

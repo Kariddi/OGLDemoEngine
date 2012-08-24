@@ -8,9 +8,9 @@ namespace Uberngine {
 template<>
 class SystemFacilitiesFactory<UBE_IOS> : public BaseSystemFacilitiesFactory {
 public:
-  static SystemFacilities *Create(UIView *view) {
+  static SystemFacilities *Create(CAEAGLLayer *layer) {
     if (!Sys)
-      Sys = new EAGLSystemFacilities(view);
+      Sys = new EAGLSystemFacilities(layer);
     return Sys;
   }
 };
