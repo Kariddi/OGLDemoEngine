@@ -48,7 +48,7 @@ bool EAGLSystemFacilities::CreateAndSetRenderContext(int *width, int *height, in
   glRenderbufferStorage(GL_RENDERBUFFER, DepthBufferFormat, *width, *height);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, Renderbuffers[1]);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
- 
+  glViewport(0,0,*width,*height); 
   return true;
 }
 
@@ -58,7 +58,11 @@ bool EAGLSystemFacilities::GetPressedKey(int key) { return false; }
 
 float EAGLSystemFacilities::GetTime() { return 0.0f; }
 
-void EAGLSystemFacilities::SwapBuffers() {}
+void EAGLSystemFacilities::SwapBuffers() {
+  glBindRenderbuffer(GL_RENDERBUFFER, Renderbuffers[0]);
+  [GLCtx presentRenderbuffer:GL_RENDERBUFFER]; 
+  glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
 
 void EAGLSystemFacilities::SetWindowTitle(const char *title) {}
 

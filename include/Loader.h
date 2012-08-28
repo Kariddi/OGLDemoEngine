@@ -22,11 +22,14 @@ class Loader {
   typedef NameToMatLoaderMap::iterator NameToMatLoaderMapIt;
   typedef std::vector<Uberngine::Traits::MeshVertexType> DataVector;
   typedef std::vector<Uberngine::Traits::MeshIDXType> IndexVector;
+  typedef DataVector::iterator DataVectorIt;
+  typedef IndexVector::iterator IndexVectorIt;
   typedef Uberngine::Mesh<Uberngine::Traits::MeshVertexType, Uberngine::Traits::MeshIDXType> MeshTy;
  
   struct Part {
     Uberngine::Material *Mat;
-    IndexVector *Indices;
+    //IndexVector *Indices;
+    Uberngine::Traits::MeshIDXType MaxIndex;
   };
 
   std::vector<std::string> Errors;
@@ -46,6 +49,9 @@ class Loader {
   std::string CurrentMatLib;
   bool RecordErrors;
   int CurrPartSize;
+  bool HasNorm;
+  bool HasTex;
+  int Stride;
 
   //Retrieves the next token 
   Tokens readToken();
@@ -55,6 +61,13 @@ class Loader {
   bool parseFace();
   bool parseMaterial();
   bool parseMatLib();
+  inline unsigned int computeVertexClass(unsigned int index, unsigned int offset, float mult_fact) {
+    return (unsigned int)(((*FinalVertices)[index] + (*FinalVertices)[index+1] + 
+                                      (*FinalVertices)[index+2])*mult_fact + offset);
+  }
+/* template<typename T, typename ValTy> 
+ unsigned int binaryFind(T start, T end, const ValTy &Val); */
+ void removeRedundantVertices(Uberngine::Traits::MeshIDXType *indices);
   MeshTy *constructMesh();
 
 public:

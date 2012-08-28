@@ -8,7 +8,7 @@
 namespace Uberngine {
 
 struct Traits {
-  typedef GLuint MeshIDXType;
+  typedef GLushort MeshIDXType;
   typedef GLfloat MeshVertexType;
 };
 
@@ -21,6 +21,13 @@ struct GLMeshTraits<GLfloat, GLuint> {
   static const GLenum VertexDataTy = GL_FLOAT;
   static const GLenum IndexDataTy = GL_UNSIGNED_INT;
 };
+
+template<>
+struct GLMeshTraits<GLfloat, GLushort> {
+  static const GLenum VertexDataTy = GL_FLOAT;
+  static const GLenum IndexDataTy = GL_UNSIGNED_SHORT;
+};
+
 
 }
 

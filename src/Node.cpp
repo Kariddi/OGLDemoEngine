@@ -35,7 +35,7 @@ void Node::Render(Scene *scene) {
     //Setting the View transform matrix
     GLuint Loc = glGetUniformLocation(Program, "V");
     glUniformMatrix4fv(Loc, 1, GL_FALSE, Cam->GetViewMatrix());
-    //Setting the Projection matrix
+   //Setting the Projection matrix
     Loc = glGetUniformLocation(Program, "P");
     
     glUniformMatrix4fv(Loc, 1, GL_FALSE, Cam->GetProjMatrix());
@@ -114,7 +114,7 @@ void Node::Render(Scene *scene) {
 
       //Bind the vertex array and draw
       glBindVertexArray(RenderCTXs[i].PartVAO);
-      glDrawElements(GL_TRIANGLES, (*I)->IndicesSize, GL_UNSIGNED_INT, (void*) 0);
+      glDrawElements(GL_TRIANGLES, (*I)->IndicesSize, GLTraits::IndexDataTy , (void*) 0);
       ++i;
     }
     glBindVertexArray(0);
@@ -240,7 +240,7 @@ void Node::SetTransform(float transX, float transY, float transZ, float angle, f
   GLTransform = glm::mat4(1.0f);
   float sint = sinf(angle/2);
   GLTransform = glm::translate(GLTransform, glm::vec3(transX, transY, transZ));
-  glm::quat Rot(axisX*sint, axisY*sint, axisZ*sint, cosf(angle/2));
+  glm::quat Rot(cosf(angle/2), axisX*sint, axisY*sint, axisZ*sint);
   GLTransform *= glm::mat4_cast(glm::normalize(Rot));
 }
 

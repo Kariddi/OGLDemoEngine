@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   //Creating the camera
   Camera *Cam = new Camera(&Eng, SC);
   //Set perspective parameters
-  Cam->SetPerspectiveCamera(60.0f, 4/3, 1.0f, 1000.0f);
+  Cam->SetPerspectiveCamera(60.0f, (float)4/3, 0.1f, 1000.0f);
   //Adding camera to the scene
   SC->SetCamera(Cam);
   //Set mesh on the node (Torus mesh)
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     //Move of a predefined amount ... should be substituted with something relative to absolute time, but for now it is enough
     zm += (Eng.CheckPressedKey(GLFW_KEY_UP) ? 1.0f : 0.0f)*time_diff;
     zm += (Eng.CheckPressedKey(GLFW_KEY_DOWN) ? -1.0f : 0.0f)*time_diff;
-    std::cout << time_diff << std::endl;
+//    std::cout << time_diff << std::endl;
     if (Eng.CheckPressedKey(GLFW_KEY_ESC))
       break;
     x = x -320;

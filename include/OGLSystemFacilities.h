@@ -15,7 +15,8 @@ public:
     Renderbuffers[0] = 0;  
     Renderbuffers[1] = 0;
   }
-  inline GLuint GetDrawFramebufferObject() { return DrawFramebuffer; } 
+  inline GLuint GetDrawFramebufferObject() { return DrawFramebuffer; }
+  inline GLuint GetColorRenderbuffer() { return Renderbuffers[0]; } 
 };
 
 }

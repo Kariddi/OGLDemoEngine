@@ -2,17 +2,17 @@
 #define __UBERNGINE_IOSENGINE_H__
 #include <IOSSystemFacilitiesFactory.h>
 #include <Engine.h>
+#import <UIKit/UIView.h>
 #import <QuartzCore/CAEAGLLayer.h>
 
 namespace Uberngine {
 
 template<>
 class Engine<UBE_IOS> : public BaseEngine {
-  CAEAGLLayer *IosLayer;
+  UIView *IosView;
 public:
-  Engine<UBE_IOS>(CAEAGLLayer *layer) : IosLayer(layer) {
-    if (Sys == NULL)
-      Sys = static_cast<OGLSystemFacilities*>(SystemFacilitiesFactory<UBE_IOS>::Create(layer)); 
+  Engine<UBE_IOS>(UIView *layer) : IosView(layer) {
+    Sys = static_cast<OGLSystemFacilities*>(SystemFacilitiesFactory<UBE_IOS>::Create((CAEAGLLayer*) IosView.layer)); 
   }
   bool Init(int width, int height, int c_bits, int d_bits, int s_bits) {
     bool ret_val = false;
@@ -28,6 +28,9 @@ public:
     }
     return ret_val;
   }
+  GLuint GetFramebuffer() { return Sys->GetDrawFramebufferObject(); }
+  GLuint GetColorRenderbuffer() { return Sys->GetColorRenderbuffer(); }
+  EAGLSystemFacilities *GetSysFacilities() { return static_cast<EAGLSystemFacilities*>(Sys); }
 };
 
 }

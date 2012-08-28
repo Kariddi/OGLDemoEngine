@@ -2,6 +2,8 @@ cmake_minimum_required (VERSION 2.6)
 project (Demo)
 
 include_directories ("${PROJECT_SOURCE_DIR}/include")
+file(GLOB_RECURSE INCS "include/*.h")
+
 if (APPLE AND (NOT IOS))
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
   FIND_LIBRARY(OPENGL_LIBRARY OpenGL )
@@ -36,17 +38,22 @@ ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp src/SystemFacilities
 endif (UNIX AND (NOT APPLE))
 
 if (WIN32) 
-ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/Loader.cpp src/MaterialLoader.cpp main_win32.cpp)
+ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/Loader.cpp src/MaterialLoader.cpp main_win32.cpp ${INCS})
 endif (WIN32)
 
 if (APPLE AND (NOT IOS))
-ADD_EXECUTABLE(Demo src/GLFWSystemFacilities.cpp src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/Loader.cpp src/MaterialLoader.cpp main.cpp)
+ADD_EXECUTABLE(Demo src/GLFWSystemFacilities.cpp src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/Loader.cpp src/MaterialLoader.cpp main.cpp ${INCS})
 SET_TARGET_PROPERTIES(Demo PROPERTIES COMPILE_FLAGS "-O0 -g")
 endif (APPLE AND (NOT IOS))
 
 if (APPLE AND IOS)
-ADD_LIBRARY(Uberngine STATIC src/EAGLSystemFacilities.mm src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/Loader.cpp src/MaterialLoader.cpp) 
+ADD_LIBRARY(Uberngine STATIC src/EAGLSystemFacilities.mm src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/Loader.cpp src/MaterialLoader.cpp ${INCS}) 
 SET_TARGET_PROPERTIES(Uberngine PROPERTIES COMPILE_FLAGS "-x objective-c++ -fobjc-arc")
+  if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    SET_TARGET_PROPERTIES(Uberngine PROPERTIES XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS "YES")
+  endif (CMAKE_BUILD_TYPE MATCHES "Debug")
+
+SET_TARGET_PROPERTIES(Uberngine PROPERTIES XCODE_ATTRIBUTE_GCC_THUMB_SUPPORT "NO")
 endif(APPLE AND IOS)
 
 if (APPLE AND IOS)
