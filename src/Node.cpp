@@ -103,13 +103,13 @@ void Node::Render(Scene *scene) {
 */
       //Set textures
       int tex_num = (*I)->Mat.TextureIdx.size();
-      for (int i = 0; i < tex_num; ++i) {
+      for (int i2 = 0; i2 < tex_num; ++i2) {
         std::stringstream ss;
-        ss << "Textures[" << i << "]";
+        ss << "Textures[" << i2 << "]";
         Loc = glGetUniformLocation(Program, ss.str().c_str());
-        glUniform1i(Loc, i);
-        glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, Textures[(*I)->Mat.TextureIdx[i]]);
+        glUniform1i(Loc, i2);
+        glActiveTexture(GL_TEXTURE0 + i2);
+        glBindTexture(GL_TEXTURE_2D, Textures[(*I)->Mat.TextureIdx[i2]]);
       }
 
       //Bind the vertex array and draw
@@ -207,13 +207,13 @@ void Node::SetMesh(MeshTy *mesh) {
       glEnableVertexAttribArray(1);
 	if (mesh->HasNormals)
 	  glEnableVertexAttribArray(2);
-    glVertexAttribPointer(0, 3, GLTraits::VertexDataTy, GL_FALSE, stride, (void*) 0);
+    glVertexAttribPointer(0, 3, GLTraits::VertexDataTy, GL_FALSE, stride, reinterpret_cast<void*>(0));
     if (mesh->HasTexture) {
-      glVertexAttribPointer(1, 2, GLTraits::VertexDataTy, GL_FALSE, stride, (void*)  offset);
+      glVertexAttribPointer(1, 2, GLTraits::VertexDataTy, GL_FALSE, stride, reinterpret_cast<void*>(offset));
       offset += sizeof(Traits::MeshVertexType)*2;
     }
     if (mesh->HasNormals)
-      glVertexAttribPointer(2, 3, GLTraits::VertexDataTy, GL_FALSE, stride, (void*) offset);
+      glVertexAttribPointer(2, 3, GLTraits::VertexDataTy, GL_FALSE, stride, reinterpret_cast<void*>(offset));
     glGenBuffers(1, &RenderCTXs[i].VBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RenderCTXs[i].VBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*I)->IndicesSize*sizeof(Traits::MeshIDXType), 

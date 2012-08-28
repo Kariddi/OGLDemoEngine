@@ -37,27 +37,28 @@ int main(int argc, char **argv)
   //Adding camera to the scene
   SC->SetCamera(Cam);
   //Set mesh on the node (Torus mesh)
-  MyNode->SetMesh(mesh);
   mesh2 = load.loadMesh("Spiderman.obj", false);
+  
+  MyNode->SetMesh(mesh);
   //Set mesh on the second node (Spiderman mesh)
   MyNode2->SetMesh(mesh2);
   //Adding a light
   Light *MyLight = new Light(Light::DIRECTIONAL, 0.0f, 0.0f,0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f);
-/*  //Adding the node to the scene
-  SC->AddChildNode(MyNode);
+  //Adding the node to the scene
+//  SC->AddChildNode(MyNode);
   //Adding the second node as child of the first
-  MyNode->AddChildNode(MyNode2);
-*/  //Adding the light to the scene
+//  MyNode->AddChildNode(MyNode2);
+  //Adding the light to the scene
   SC->AddLight(MyLight);
   //Load the scene
   Eng.LoadScene(0);
   //Creating and adding shaders to the nodes
   Shader *shad = new Shader("./test.vert", "./no_tex_test.frag");
-  MyNode->SetShader(shad);
   Shader *shad2 = new Shader("./test.vert", "./test.frag");
+  MyNode->SetShader(shad);
   MyNode2->SetShader(shad2);
   //Setting node and camera transformations
-  MyNode2->SetTransform(0.0f, 0.0f, -0.0f, 0.0f, 0.0f,0.0f,0.0f);
+  //MyNode2->SetTransform(0.0f, 0.0f, -0.0f, 0.0f, 0.0f,0.0f,0.0f);
   Cam->LookAt(0.0f, 0.0f, -6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
   float xm = 0.0f, ym = 0.0f, zm = 0.0f;
   //Main loop

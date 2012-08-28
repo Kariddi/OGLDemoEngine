@@ -3,7 +3,7 @@
 
 #include <SystemFacilities.h>
 #include <Defs.h>
-#if defined(MAC_SYS) || defined(_WIN32) || defined(_linux) 
+#if defined(MAC_SYS) || defined(_WIN32) || defined(linux) 
 #include <GLFWSystemFacilities.h>
 #endif
 #if defined(IOS_SYS)

@@ -301,8 +301,8 @@ Loader::MeshTy *Loader::constructMesh() {
     OptIndices[i] = i;
   removeRedundantVertices(OptIndices);
 
-  unsigned int VertexNum = FinalVertices->size();
-  Traits::MeshVertexType *Vertices = new Traits::MeshVertexType[VertexNum];
+  unsigned int VertexNum = FinalVertices->size() / Stride;
+  Traits::MeshVertexType *Vertices = new Traits::MeshVertexType[VertexNum*Stride];
   //Creating the final vertex vector
   std::copy(FinalVertices->begin(), FinalVertices->end(), Vertices);
   delete FinalVertices;

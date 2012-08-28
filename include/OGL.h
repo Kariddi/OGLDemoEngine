@@ -3,6 +3,7 @@
 
 #if defined(__APPLE__)
 #include <TargetConditionals.h>
+
 #if (TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR)
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
@@ -11,6 +12,7 @@
 #include <OpenGL/gl.h>
 #define OGL
 #endif
+
 #if defined(OGL)
 #define glGenVertexArrays glGenVertexArraysAPPLE
 #define glBindVertexArray glBindVertexArrayAPPLE
@@ -20,8 +22,10 @@
 #define glBindVertexArray glBindVertexArrayOES
 #define glDeleteVertexArrays glDeleteVertexArraysOES
 #define glClearDepth glClearDepthf
+#endif
+
 #else
 #include <GL/glew.h>
 #endif
-#endif
+
 #endif
