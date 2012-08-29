@@ -12,7 +12,8 @@
 using namespace Uberngine;
 
 Node::Node(BaseEngine *e, Node *parent) : NodeMesh(NULL), RenderCTXs(NULL), ShaderProg(NULL), Parent(NULL),
-                                            GLTransform(1.0f), Eng(*e) {
+                                          GLTransform(1.0f), GLIdxType(NULL), GLNormType(GL_FLOAT), GLTexType(GL_FLOAT),
+                                          Eng(*e) {
  if (parent != NULL)
    parent->AddChildNode(this); 
 }
@@ -85,7 +86,7 @@ void Node::Render(Scene *scene) {
 
     int i = 0;
     //For each part of the mesh
-    for (MeshTy::PartListIt I = NodeMesh->Parts.begin(), E = NodeMesh->Parts.end(); I != E; ++I) {
+    for (Mesh::PartListIt I = NodeMesh->Parts.begin(), E = NodeMesh->Parts.end(); I != E; ++I) {
       //Set the material data
       //GLuint VAO = RenderCTXs[i].PartVAO;
       //int Ind = (*I)->IndicesSize;
@@ -114,7 +115,7 @@ void Node::Render(Scene *scene) {
 
       //Bind the vertex array and draw
       glBindVertexArray(RenderCTXs[i].PartVAO);
-      glDrawElements(GL_TRIANGLES, (*I)->IndicesSize, GLTraits::IndexDataTy , (void*) 0);
+      glDrawElements(GL_TRIANGLES, (*I)->IndicesSize, GLIdxType[i], (void*) 0);
       ++i;
     }
     glBindVertexArray(0);
@@ -147,7 +148,7 @@ void Node::AddChildNode(Node *node) {
   Children.push_back(node);
 }
 
-void Node::SetMesh(MeshTy *mesh) {
+void Node::SetMesh(Mesh *mesh) {
   //Clear data associated to the previously associated mesh
   if (RenderCTXs) {
     int old_num_parts = NodeMesh->Parts.size();
@@ -159,18 +160,47 @@ void Node::SetMesh(MeshTy *mesh) {
     glDeleteTextures(old_tex_nums, Textures);
   //  glDeleteSamplers(3, Samplers);
     delete [] RenderCTXs;
+    delete [] GLIdxType;
     glDeleteBuffers(1, &VertVBO);
   }
 
   if (mesh == NULL)
     return;
 
+  if (mesh->NormElementType.first == 4) {
+    GLNormType = GL_FLOAT;
+  } else if (mesh->NormElementType.first == 2) {
+    if (mesh->NormElementType.second) {
+      GLNormType = GL_SHORT;
+    } else {
+      GLNormType = GL_UNSIGNED_SHORT;
+    }
+  } else if (mesh->NormElementType.first == 1) {
+    if (mesh->NormElementType.second) {
+      GLNormType = GL_BYTE;
+    } else {
+      GLNormType = GL_UNSIGNED_BYTE;
+    }
+  }
+
+  if (mesh->TexElementType.first == 4) {
+    GLTexType = GL_FLOAT;
+  } else if (mesh->TexElementType.first == 2) {
+    if (mesh->TexElementType.second) {
+      GLTexType = GL_SHORT;
+    } else {
+      GLTexType = GL_UNSIGNED_SHORT;
+    }
+  } else if (mesh->TexElementType.first == 1) {
+    if (mesh->TexElementType.second) {
+      GLTexType = GL_BYTE;
+    } else {
+      GLTexType = GL_UNSIGNED_BYTE;
+    }
+  }
+  
   int num_parts = mesh->Parts.size();
-  int stride = 3*sizeof(Traits::MeshVertexType);
-  if (mesh->HasTexture)
-    stride += 2*sizeof(Traits::MeshVertexType);
-  if (mesh->HasNormals)
-    stride += 3*sizeof(Traits::MeshVertexType);
+  GLIdxType = new GLenum[num_parts];
 
   //Create textures
   int tex_num = mesh->Textures.size();
@@ -190,38 +220,48 @@ void Node::SetMesh(MeshTy *mesh) {
   //Create and prepare the VBOs
   glGenBuffers(1, &VertVBO);
   glBindBuffer(GL_ARRAY_BUFFER, VertVBO);
-  glBufferData(GL_ARRAY_BUFFER, mesh->VerticesNum*stride, 
+  glBufferData(GL_ARRAY_BUFFER, mesh->VerticesNum*mesh->VertexStride, 
                mesh->Vertices, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   RenderCTXs = new PartRenderCtx[num_parts];
   //For each mesh part create the VAOs
   int i = 0;
-  int offset = sizeof(Traits::MeshVertexType)*3;
-  for (_MeshTy::PartListIt I = mesh->Parts.begin(), E = mesh->Parts.end(); I != E; ++I) {
+  int offset = sizeof(float)*3;
+  for (Mesh::PartListIt I = mesh->Parts.begin(), E = mesh->Parts.end(); I != E; ++I) {
     glGenVertexArrays(1, &RenderCTXs[i].PartVAO);
     glBindVertexArray(RenderCTXs[i].PartVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VertVBO);
-	glEnableVertexAttribArray(0);
-	if (mesh->HasTexture)
+    glEnableVertexAttribArray(0);
+    if (mesh->HasTexture)
       glEnableVertexAttribArray(1);
-	if (mesh->HasNormals)
-	  glEnableVertexAttribArray(2);
-    glVertexAttribPointer(0, 3, GLTraits::VertexDataTy, GL_FALSE, stride, reinterpret_cast<void*>(0));
-    if (mesh->HasTexture) {
-      glVertexAttribPointer(1, 2, GLTraits::VertexDataTy, GL_FALSE, stride, reinterpret_cast<void*>(offset));
-      offset += sizeof(Traits::MeshVertexType)*2;
-    }
     if (mesh->HasNormals)
-      glVertexAttribPointer(2, 3, GLTraits::VertexDataTy, GL_FALSE, stride, reinterpret_cast<void*>(offset));
+      glEnableVertexAttribArray(2);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, mesh->VertexStride, reinterpret_cast<void*>(0));
+    if (mesh->HasTexture) {
+      GLboolean normalized = (GLTexType != GL_FLOAT && mesh->TexElementType.second) ? GL_TRUE : GL_FALSE;
+      glVertexAttribPointer(1, 2, GLTexType, normalized, mesh->VertexStride, reinterpret_cast<void*>(offset));
+      offset += mesh->TexElementType.first*2;
+    }
+    if (mesh->HasNormals) {
+      GLboolean normalized = (GLNormType != GL_FLOAT && mesh->NormElementType.second) ? GL_TRUE : GL_FALSE;
+      glVertexAttribPointer(2, 3, GLNormType, normalized, mesh->VertexStride, reinterpret_cast<void*>(offset));
+    }
     glGenBuffers(1, &RenderCTXs[i].VBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RenderCTXs[i].VBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*I)->IndicesSize*sizeof(Traits::MeshIDXType), 
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*I)->IndicesSize*(*I)->IdxElementSize, 
                  (*I)->Indices, GL_STATIC_DRAW);
 
     glBindVertexArray(0);
     for (int j = 0; j < 3; ++j)
       glDisableVertexAttribArray(j);
+    
+    if ((*I)->IdxElementSize == 4)
+      GLIdxType[i] = GL_UNSIGNED_INT;
+    else if ((*I)->IdxElementSize == 2)
+      GLIdxType[i] = GL_UNSIGNED_SHORT;
+    else if ((*I)->IdxElementSize == 1)
+      GLIdxType[i] = GL_UNSIGNED_BYTE;
 
     ++i;
   }

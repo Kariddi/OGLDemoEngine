@@ -5,7 +5,6 @@
 #include <fstream>
 #include <map>
 #include <Mesh.h>
-#include <Traits.h>
 
 //using namespace std;
 /*
@@ -18,12 +17,12 @@ class MaterialLoader {
                 END, UNKN };
   typedef std::map<std::string, Uberngine::Material*> NameToMaterialMap;
   typedef NameToMaterialMap::iterator NameToMaterialMapIt;
-  typedef Uberngine::Mesh<Uberngine::Traits::MeshVertexType, Uberngine::Traits::MeshIDXType> MeshTy;
+//  typedef Uberngine::Mesh<Uberngine::Traits::MeshVertexType, Uberngine::Traits::MeshIDXType> MeshTy;
 
   std::vector<std::string> Errors;
   NameToMaterialMap MaterialMap;
   Uberngine::Material *CurrentMaterial;
-  MeshTy::TextureList *TexList;
+  Uberngine::Mesh::TextureList *TexList;
   //string CurrMatName;
   std::ifstream MaterialFile;
   std::string TokString;
@@ -41,7 +40,7 @@ public:
 
   MaterialLoader(const std::string &dir_path) : DirectoryPath(dir_path) {}
   //Parses a material file and adds each material found to its own map
-  bool loadMaterialFile(const std::string &filename, MeshTy::TextureList *tlist, bool record_errors);
+  bool loadMaterialFile(const std::string &filename, Uberngine::Mesh::TextureList *tlist, bool record_errors);
   //Retrieves a material from its name
   Uberngine::Material* getMaterial(const std::string& name) {
     NameToMaterialMapIt It = MaterialMap.find(name);

@@ -106,7 +106,7 @@ bool MaterialLoader::parseNi() {
   return !ss.fail(); 
 }
 
-bool MaterialLoader::loadMaterialFile(const string &filename, MeshTy::TextureList *tlist, bool record_errors) {
+bool MaterialLoader::loadMaterialFile(const string &filename, Uberngine::Mesh::TextureList *tlist, bool record_errors) {
 
  string full_pathname = DirectoryPath + filename;
  MaterialFile.open(full_pathname.c_str(), ifstream::in);

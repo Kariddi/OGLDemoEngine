@@ -5,7 +5,11 @@
 using namespace std;
 using namespace Uberngine;
 
-BaseEngine::BaseEngine() : CurrScene(0), DepthTestEnabled(false) {
+BaseEngine::BaseEngine() : CurrScene(0), DepthTestEnabled(false),
+                           Sys(NULL), FrameTime(0.0f),
+                           PreviousFrameTime(0.0f), 
+                           FrameTimeDelta(0.0f),
+                           Width(0), Height(0), Depth(0) {
   //glfwInit();
   //if (Sys == NULL)
   //  Sys = SystemFacilitiesFactory::Create(UBE_OGL); 

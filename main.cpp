@@ -20,10 +20,10 @@ int main(int argc, char **argv)
   //Initializing engine
   Eng.Init("Baluba", 640,480, 24, 16, 0, false);
   //Loading Meshes
-  Node::MeshTy *mesh = NULL;
-  Node::MeshTy *mesh2 = NULL;
+  Mesh *mesh = NULL;
+  Mesh *mesh2 = NULL;
   ObjLoader::Loader load("./");
-  mesh = load.loadMesh("Torus.obj", false);
+  mesh = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_BYTE>("Torus.obj", false);
   
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
   //Adding camera to the scene
   SC->SetCamera(Cam);
   //Set mesh on the node (Torus mesh)
-  mesh2 = load.loadMesh("Spiderman.obj", false);
+  mesh2 = load.loadMesh<UBE_LOADER_SHORT, UBE_LOADER_SHORT>("Spiderman.obj", false);
   
   MyNode->SetMesh(mesh);
   //Set mesh on the second node (Spiderman mesh)
@@ -58,10 +58,12 @@ int main(int argc, char **argv)
   MyNode->SetShader(shad);
   MyNode2->SetShader(shad2);
   //Setting node and camera transformations
-  //MyNode2->SetTransform(0.0f, 0.0f, -0.0f, 0.0f, 0.0f,0.0f,0.0f);
+  MyNode2->SetTransform(0.0f, 0.0f, -0.0f, 0.0f, 0.0f,0.0f,0.0f);
   Cam->LookAt(0.0f, 0.0f, -6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
   float xm = 0.0f, ym = 0.0f, zm = 0.0f;
   //Main loop
+  int framecount = 0;
+  float cum_time = 0.0f;
   while(1) {
     int x, y;
     Eng.GetMousePosition(&x, &y);
@@ -78,6 +80,14 @@ int main(int argc, char **argv)
    
     MyNode->SetTransform(0.0f,0.0f,zm, (fx*fx + fy*fy)*PI, fy,-fx,1.0f);
     Eng.StepSingleFrame();
+    
+    cum_time += Eng.GetFrameTimeDelta();
+    ++framecount;
+    if (cum_time > 5.0f) {
+      std::cout << "FPS: " << framecount / cum_time << " Passed time: " << cum_time << std::endl;
+      framecount = 0;
+      cum_time = 0.0f;
+    }
   }
   //delete SC;
   //delete MyNode;

@@ -20,8 +20,8 @@ int main(int argc, char **argv)
   //Initializing engine
   Eng.Init("Baluba", 640,480, 24, 16, 0, false);
   //Loading Meshes
-  Node::MeshTy *mesh = NULL;
-  Node::MeshTy *mesh2 = NULL;
+  Mesh *mesh = NULL;
+  Mesh *mesh2 = NULL;
   ObjLoader::Loader load("..\\");
   mesh = load.loadMesh("Torus.obj", false);
   

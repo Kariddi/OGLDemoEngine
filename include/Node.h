@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp> //value_ptr
 #include <glm/gtc/quaternion.hpp>
 #include <Mesh.h>
-#include <Traits.h>
+#include <GLTraits.h>
 
 namespace Uberngine {
 
@@ -22,9 +22,9 @@ struct PartRenderCtx {
   GLuint VBO;
 };
 
-typedef Mesh<Traits::MeshVertexType, Traits::MeshIDXType> _MeshTy;
-typedef GLMeshTraits<Traits::MeshVertexType, Traits::MeshIDXType> GLTraits;
-  _MeshTy *NodeMesh;
+//typedef Mesh<Traits::MeshVertexType, Traits::MeshIDXType> _MeshTy;
+//typedef GLMeshTraits<Traits::MeshVertexType, Traits::MeshIDXType> GLTraits;
+  Mesh *NodeMesh;
   PartRenderCtx *RenderCTXs;
   GLuint VertVBO;
   GLuint *Textures;
@@ -34,6 +34,9 @@ typedef GLMeshTraits<Traits::MeshVertexType, Traits::MeshIDXType> GLTraits;
   glm::mat4 Comulative;
   glm::mat4 GLTransform;
   static glm::quat IdQuat;
+  GLenum *GLIdxType;
+  GLenum GLNormType;
+  GLenum GLTexType;
   //bool Hooked;
 
 protected:
@@ -47,7 +50,7 @@ typedef NodeList::iterator NodeListIt;
   void GlobalUpdate();
 
 public:
-typedef _MeshTy MeshTy;
+//typedef _MeshTy MeshTy;
   Node(BaseEngine *e, Node *parent);
   virtual ~Node();
   //For physics use ...
@@ -55,7 +58,7 @@ typedef _MeshTy MeshTy;
   //Adds a child node to this node
   void AddChildNode(Node *node);
   //Attaches a mesh to this Node
-  void SetMesh(MeshTy *mesh);
+  void SetMesh(Mesh *mesh);
   //Attaches a shader to this Node
   void SetShader(Shader *shader);
   //Returns an array representing the Transform of the node
