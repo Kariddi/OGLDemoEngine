@@ -1,9 +1,7 @@
 #include "Loader.h"
 #include <sstream>
 #include <iostream>
-#include <limits>
 #include <cmath>
-#include <algorithm>
 #include <set>
 
 //#define REGISTER_ERROR(message) if (record_errors && !no_error) \
@@ -193,7 +191,7 @@ void Loader::removeRedundantVertices(unsigned int *indices) {
   DataVector &Vertices = *FinalVertices;
   ParseDataTy min = std::numeric_limits<ParseDataTy>::min(), max = std::numeric_limits<ParseDataTy>::max();
   //Compute classes for vertices , a class is the sum of the position components.
-  for (int i = 0; i < VerticesNum; ++i) {
+  for (unsigned int i = 0; i < VerticesNum; ++i) {
     ParseIndexTy Index = i*Stride;
     ParseDataTy VClass = Vertices[Index] + Vertices[Index+1] + Vertices[Index+2];
     if (VClass < min)

@@ -4,6 +4,8 @@
 #include <string>
 #include <fstream>
 #include <map>
+#include <limits>
+#include <algorithm>
 #include <Mesh.h>
 #include <Defs.h>
 #include <MaterialLoader.h>
@@ -138,11 +140,11 @@ void Loader::copyAndNormalizeVertexData(char *TargetVertices) {
   unsigned int i = 0;
   for (DataVectorIt I = FinalVertices->begin(), E = FinalVertices->end(); I != E; ++I) {
     //Copy position data
-    *(reinterpret_cast<PositionTy*>(&TargetVertices[i])) = *I++;
+    *(reinterpret_cast<PositionTy*>(&TargetVertices[i])) = static_cast<PositionTy>(*I++);
     i += POff;
-    *(reinterpret_cast<PositionTy*>(&TargetVertices[i])) = *I++;
+    *(reinterpret_cast<PositionTy*>(&TargetVertices[i])) = static_cast<PositionTy>(*I++);
     i += POff;
-     *(reinterpret_cast<PositionTy*>(&TargetVertices[i])) = *I++;
+     *(reinterpret_cast<PositionTy*>(&TargetVertices[i])) = static_cast<PositionTy>(*I++);
     i += POff;
     if (HasTex) { 
       if (Texture != Uberngine::UBE_LOADER_FLOAT) {
@@ -151,9 +153,9 @@ void Loader::copyAndNormalizeVertexData(char *TargetVertices) {
         *(reinterpret_cast<TextureTy*>(&TargetVertices[i])) = normalizeData<TextureTy>(*I++);
         i += TOff;
       } else {
-        *(reinterpret_cast<TextureTy*>(&TargetVertices[i])) = *I++;
+        *(reinterpret_cast<TextureTy*>(&TargetVertices[i])) = static_cast<TextureTy>(*I++);
         i += TOff;
-        *(reinterpret_cast<TextureTy*>(&TargetVertices[i])) = *I++;
+        *(reinterpret_cast<TextureTy*>(&TargetVertices[i])) = static_cast<TextureTy>(*I++);
         i += TOff;
       }
     }
@@ -166,11 +168,11 @@ void Loader::copyAndNormalizeVertexData(char *TargetVertices) {
         *(reinterpret_cast<NormalTy*>(&TargetVertices[i])) = normalizeData<NormalTy>(*I);
         i += NOff; 
       } else {
-        *(reinterpret_cast<NormalTy*>(&TargetVertices[i])) = *I++;
+        *(reinterpret_cast<NormalTy*>(&TargetVertices[i])) = static_cast<NormalTy>(*I++);
         i += NOff;
-        *(reinterpret_cast<NormalTy*>(&TargetVertices[i])) = *I++;
+        *(reinterpret_cast<NormalTy*>(&TargetVertices[i])) = static_cast<NormalTy>(*I++);
         i += NOff;
-        *(reinterpret_cast<NormalTy*>(&TargetVertices[i])) = *I;
+        *(reinterpret_cast<NormalTy*>(&TargetVertices[i])) = static_cast<NormalTy>(*I);
         i += NOff; 
       }
     }

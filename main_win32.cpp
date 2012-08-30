@@ -22,8 +22,8 @@ int main(int argc, char **argv)
   //Loading Meshes
   Mesh *mesh = NULL;
   Mesh *mesh2 = NULL;
-  ObjLoader::Loader load("..\\");
-  mesh = load.loadMesh("Torus.obj", false);
+  ObjLoader::Loader load("E:\\Demo\\");
+  mesh = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_BYTE>("Torus.obj", false);
   
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
   SC->SetCamera(Cam);
   //Set mesh on the node (Torus mesh)
   MyNode->SetMesh(mesh);
-  mesh2 = load.loadMesh("Spiderman.obj", false);
+  mesh2 = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_BYTE>("Spiderman.obj", false);
   //Set mesh on the second node (Spiderman mesh)
   MyNode2->SetMesh(mesh2);
   //Adding a light
