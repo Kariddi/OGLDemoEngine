@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   Mesh *mesh = NULL;
   Mesh *mesh2 = NULL;
   ObjLoader::Loader load("./");
-  mesh = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_BYTE>("Torus.obj", false);
+  mesh = load.loadMesh<UBE_LOADER_SHORT, UBE_LOADER_SHORT>("Torus.obj", false);
   
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
