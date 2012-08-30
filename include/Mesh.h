@@ -2,6 +2,7 @@
 #define __UBERNGINE_MESH_H__
 #include <vector>
 #include <Texture.h>
+#include <LoaderTraits.h>
 /*
   These structs contain the Mesh and material data
 */
@@ -26,7 +27,7 @@ struct Part {
   //OGL specific
   unsigned char IdxElementSize;
   Part(void *ind, unsigned char idx_elem_size, 
-       unsigned int ind_size, const Material *mat) : Mat(*mat), Indices(reinterpret_cast<char*>(ind)), 
+       unsigned int ind_size, const Material *mat) : Mat(*mat), Indices(static_cast<char*>(ind)), 
                                                      IndicesSize(ind_size), IdxElementSize(idx_elem_size) {}
   ~Part() {
     if (Indices)
@@ -70,12 +71,12 @@ struct Mesh {
   SizeSignedPair TexElementType;
   Mesh(void *verts, unsigned int vert_num, bool has_tex, bool has_norms,
        SizeSignedPair norm_elem_type, SizeSignedPair tex_elem_type,
-       const std::vector<Part*>& parts, const TextureList &tex) : HasTexture(has_tex), HasNormals(has_norms), Vertices(reinterpret_cast<char*>(verts)),
+       const std::vector<Part*>& parts, const TextureList &tex) : HasTexture(has_tex), HasNormals(has_norms), Vertices(static_cast<char*>(verts)),
                                                                   VerticesNum(vert_num), 
                                                                   NormElementType(norm_elem_type), TexElementType(tex_elem_type), 
                                                                   Parts(parts), Textures(tex) {
     const unsigned char PadAmount[] = { 0, 3, 2, 1 };
-    VertexStride = 3*sizeof(float);
+    VertexStride = 3*LoaderElement<UBE_LOADER_FLOAT>::Size;
     if (has_tex)
       VertexStride += 2*tex_elem_type.first;
     if (has_norms)

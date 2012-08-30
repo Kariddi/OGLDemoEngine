@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   Mesh *mesh = NULL;
   Mesh *mesh2 = NULL;
   ObjLoader::Loader load("./");
-  mesh = load.loadMesh<UBE_LOADER_SHORT, UBE_LOADER_SHORT>("Torus.obj", false);
+  mesh = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_BYTE>("Torus.obj", false);
   
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
   //Adding camera to the scene
   SC->SetCamera(Cam);
   //Set mesh on the node (Torus mesh)
-  mesh2 = load.loadMesh<UBE_LOADER_SHORT, UBE_LOADER_SHORT>("Spiderman.obj", false);
+  mesh2 = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_FLOAT>("Spiderman.obj", false);
   
   MyNode->SetMesh(mesh);
   //Set mesh on the second node (Spiderman mesh)

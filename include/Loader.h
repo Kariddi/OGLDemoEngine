@@ -248,8 +248,8 @@ Uberngine::Mesh *Loader::constructMesh() {
   delete [] OptIndices;
   //Creating the new Mesh
   Uberngine::Mesh *NewMesh = new Uberngine::Mesh(Vertices, VertexNum, HasTex, HasNorm, 
-                                                 Uberngine::Mesh::SizeSignedPair(TSize, TSign), 
-                                                 Uberngine::Mesh::SizeSignedPair(NSize, NSign), PartVect, TexList);
+                                                 Uberngine::Mesh::SizeSignedPair(NSize, NSign), 
+                                                 Uberngine::Mesh::SizeSignedPair(TSize, TSign), PartVect, TexList);
   TexList.clear();
 
   return NewMesh;
