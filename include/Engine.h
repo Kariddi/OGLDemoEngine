@@ -2,9 +2,11 @@
 #define __UBERNGINE_ENGINE_H__
 #include <vector>
 #include <OGL.h>
+#include <PhysicsManager.h>
 #include <OGLSystemFacilities.h>
 #include <SystemFacilitiesFactory.h>
 #include <Defs.h>
+#include <btBulletDynamicsCommon.h>
 
 /*
   This is the main class of the Engine. Creates the window, renders the scene and manages input.
@@ -19,6 +21,8 @@ class Node;
 class BaseEngine {
 typedef std::vector<Scene*> SceneList;
 typedef SceneList::iterator SceneListIt;
+
+  PhysicsManager *PhyMan;
 
 protected:
   SceneList Scenes;

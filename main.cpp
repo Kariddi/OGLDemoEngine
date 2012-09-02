@@ -3,7 +3,7 @@
 #include <Node.h>
 #include <Scene.h>
 #include <Shader.h>
-#include <Loader.h>
+#include <ObjLoader.h>
 #include <Camera.h>
 #include <Constants.h>
 #include <iostream>
@@ -22,8 +22,8 @@ int main(int argc, char **argv)
   //Loading Meshes
   Mesh *mesh = NULL;
   Mesh *mesh2 = NULL;
-  ObjLoader::Loader load("./");
-  mesh = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_BYTE>("Torus.obj", false);
+  Loader::ObjLoader<UBE_LOADER_BYTE, UBE_LOADER_BYTE> load("./");
+  mesh = load.loadMesh("Torus.obj", false);
   
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
   //Adding camera to the scene
   SC->SetCamera(Cam);
   //Set mesh on the node (Torus mesh)
-  mesh2 = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_FLOAT>("Spiderman.obj", false);
+  mesh2 = load.loadMesh("Spiderman.obj", false);
   
   MyNode->SetMesh(mesh);
   //Set mesh on the second node (Spiderman mesh)

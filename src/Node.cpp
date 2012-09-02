@@ -13,7 +13,7 @@ using namespace Uberngine;
 
 Node::Node(BaseEngine *e, Node *parent) : NodeMesh(NULL), RenderCTXs(NULL), ShaderProg(NULL), Parent(NULL),
                                           GLTransform(1.0f), GLIdxType(NULL), GLNormType(GL_FLOAT), GLTexType(GL_FLOAT),
-                                          Eng(*e) {
+                                          Eng(*e), IsKinematic(true) {
  if (parent != NULL)
    parent->AddChildNode(this); 
 }
@@ -167,32 +167,32 @@ void Node::SetMesh(Mesh *mesh) {
   if (mesh == NULL)
     return;
 
-  if (mesh->NormElementType.first == 4) {
+  if (mesh->AttInfo.NormSize == 4) {
     GLNormType = GL_FLOAT;
-  } else if (mesh->NormElementType.first == 2) {
-    if (mesh->NormElementType.second) {
+  } else if (mesh->AttInfo.NormSize == 2) {
+    if (mesh->AttInfo.NormSigned) {
       GLNormType = GL_SHORT;
     } else {
       GLNormType = GL_UNSIGNED_SHORT;
     }
-  } else if (mesh->NormElementType.first == 1) {
-    if (mesh->NormElementType.second) {
+  } else if (mesh->AttInfo.NormSize == 1) {
+    if (mesh->AttInfo.NormSigned) {
       GLNormType = GL_BYTE;
     } else {
       GLNormType = GL_UNSIGNED_BYTE;
     }
   }
 
-  if (mesh->TexElementType.first == 4) {
+  if (mesh->AttInfo.TexSize == 4) {
     GLTexType = GL_FLOAT;
-  } else if (mesh->TexElementType.first == 2) {
-    if (mesh->TexElementType.second) {
+  } else if (mesh->AttInfo.TexSize == 2) {
+    if (mesh->AttInfo.TexSigned) {
       GLTexType = GL_SHORT;
     } else {
       GLTexType = GL_UNSIGNED_SHORT;
     }
-  } else if (mesh->TexElementType.first == 1) {
-    if (mesh->TexElementType.second) {
+  } else if (mesh->AttInfo.TexSize == 1) {
+    if (mesh->AttInfo.TexSigned) {
       GLTexType = GL_BYTE;
     } else {
       GLTexType = GL_UNSIGNED_BYTE;
@@ -220,32 +220,31 @@ void Node::SetMesh(Mesh *mesh) {
   //Create and prepare the VBOs
   glGenBuffers(1, &VertVBO);
   glBindBuffer(GL_ARRAY_BUFFER, VertVBO);
-  glBufferData(GL_ARRAY_BUFFER, mesh->VerticesNum*mesh->VertexStride, 
+  glBufferData(GL_ARRAY_BUFFER, mesh->VerticesNum*mesh->AttInfo.VertexStride, 
                mesh->Vertices, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   RenderCTXs = new PartRenderCtx[num_parts];
   //For each mesh part create the VAOs
   int i = 0;
-  int offset = sizeof(float)*3;
   for (Mesh::PartListIt I = mesh->Parts.begin(), E = mesh->Parts.end(); I != E; ++I) {
     glGenVertexArrays(1, &RenderCTXs[i].PartVAO);
     glBindVertexArray(RenderCTXs[i].PartVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VertVBO);
     glEnableVertexAttribArray(0);
-    if (mesh->HasTexture)
+    if (mesh->AttInfo.HasTexture)
       glEnableVertexAttribArray(1);
-    if (mesh->HasNormals)
+    if (mesh->AttInfo.HasNormals)
       glEnableVertexAttribArray(2);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, mesh->VertexStride, reinterpret_cast<void*>(0));
-    if (mesh->HasTexture) {
-      GLboolean normalized = (GLTexType != GL_FLOAT && mesh->TexElementType.second) ? GL_TRUE : GL_FALSE;
-      glVertexAttribPointer(1, 2, GLTexType, normalized, mesh->VertexStride, reinterpret_cast<void*>(offset));
-      offset += mesh->TexElementType.first*2;
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, mesh->AttInfo.VertexStride, reinterpret_cast<void*>(0));
+    if (mesh->AttInfo.HasTexture) {
+      GLboolean normalized = (GLTexType != GL_FLOAT && mesh->AttInfo.TexSigned) ? GL_TRUE : GL_FALSE;
+      glVertexAttribPointer(1, 2, GLTexType, normalized, mesh->AttInfo.VertexStride, reinterpret_cast<void*>(mesh->AttInfo.TexOffset));
     }
-    if (mesh->HasNormals) {
-      GLboolean normalized = (GLNormType != GL_FLOAT && mesh->NormElementType.second) ? GL_TRUE : GL_FALSE;
-      glVertexAttribPointer(2, 3, GLNormType, normalized, mesh->VertexStride, reinterpret_cast<void*>(offset));
+    if (mesh->AttInfo.HasNormals) {
+      GLboolean normalized = (GLNormType != GL_FLOAT && mesh->AttInfo.NormSigned) ? GL_TRUE : GL_FALSE;
+      glVertexAttribPointer(2, 3, GLNormType, normalized, mesh->AttInfo.VertexStride, 
+                            reinterpret_cast<void*>(mesh->AttInfo.NormOffset));
     }
     glGenBuffers(1, &RenderCTXs[i].VBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, RenderCTXs[i].VBO);

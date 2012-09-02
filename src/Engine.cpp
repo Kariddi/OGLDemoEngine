@@ -10,9 +10,7 @@ BaseEngine::BaseEngine() : CurrScene(0), DepthTestEnabled(false),
                            PreviousFrameTime(0.0f), 
                            FrameTimeDelta(0.0f),
                            Width(0), Height(0), Depth(0) {
-  //glfwInit();
-  //if (Sys == NULL)
-  //  Sys = SystemFacilitiesFactory::Create(UBE_OGL); 
+  PhyMan = new PhysicsManager;
 }
 
 /*#ifdef IOS_SYS

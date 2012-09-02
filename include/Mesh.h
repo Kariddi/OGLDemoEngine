@@ -51,37 +51,52 @@ struct Part {
 };*/
 
 
+struct AttributeInfo {
+  unsigned short VertexStride;
+  unsigned char NormSize;
+  unsigned char TexSize;
+  unsigned char NormOffset;
+  unsigned char TexOffset;
+  bool NormSigned;
+  bool TexSigned;
+  bool HasTexture;
+  bool HasNormals;
+
+  AttributeInfo() : VertexStride(0), NormSize(0), 
+                    TexSize(0), NormOffset(0), TexOffset(0),
+                    NormSigned(0), TexSigned(0) {} 
+  AttributeInfo(unsigned short stride, unsigned char norm_size, unsigned char tex_size, 
+                unsigned char norm_offset, unsigned char tex_offset,
+                bool norm_signed, bool tex_signed) : VertexStride(stride), NormSize(norm_size), 
+                                                     TexSize(tex_size), NormOffset(norm_offset), TexOffset(tex_offset),
+                                                     NormSigned(norm_signed), TexSigned(tex_signed) {
+    HasTexture = tex_offset == 0 ? false : true;
+    HasNormals = norm_offset == 0 ? false : true;
+  }
+};
+
 struct Mesh {
   typedef std::vector<Part*> PartList;
   typedef PartList::iterator PartListIt;
   typedef std::vector<Texture*> TextureList;
   typedef TextureList::iterator TextureListIt;
-  typedef std::pair<unsigned char, bool> SizeSignedPair;
 
-  bool HasTexture;
-  bool HasNormals;
+  AttributeInfo AttInfo;
   char *Vertices;
   unsigned int VerticesNum;
-  unsigned short VertexStride;
-  unsigned short IndexSize;
   std::vector<Part*> Parts;
   std::vector<Texture*> Textures;
-  //OGL Specific
-  SizeSignedPair NormElementType;
-  SizeSignedPair TexElementType;
-  Mesh(void *verts, unsigned int vert_num, bool has_tex, bool has_norms,
-       SizeSignedPair norm_elem_type, SizeSignedPair tex_elem_type,
-       const std::vector<Part*>& parts, const TextureList &tex) : HasTexture(has_tex), HasNormals(has_norms), Vertices(static_cast<char*>(verts)),
-                                                                  VerticesNum(vert_num), 
-                                                                  NormElementType(norm_elem_type), TexElementType(tex_elem_type), 
-                                                                  Parts(parts), Textures(tex) {
-    const unsigned char PadAmount[] = { 0, 3, 2, 1 };
+  Mesh(void *verts, unsigned int vert_num, const AttributeInfo &ai, 
+       const std::vector<Part*>& parts, 
+       const TextureList &tex) : Vertices(static_cast<char*>(verts)),
+                                 VerticesNum(vert_num), AttInfo(ai), Parts(parts), Textures(tex) {
+    /*const unsigned char PadAmount[] = { 0, 3, 2, 1 };
     VertexStride = 3*LoaderElement<UBE_LOADER_FLOAT>::Size;
     if (has_tex)
       VertexStride += 2*tex_elem_type.first;
     if (has_norms)
       VertexStride += 3*norm_elem_type.first;
-    VertexStride += PadAmount[VertexStride % 4];
+    VertexStride += PadAmount[VertexStride % 4];*/
   }
   ~Mesh() {
     for (PartListIt I = Parts.begin(), E = Parts.end(); I != E; ++I)

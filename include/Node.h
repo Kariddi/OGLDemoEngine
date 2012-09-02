@@ -37,6 +37,7 @@ struct PartRenderCtx {
   GLenum *GLIdxType;
   GLenum GLNormType;
   GLenum GLTexType;
+  bool Kinematic;
   //bool Hooked;
 
 protected:
@@ -63,6 +64,10 @@ public:
   void SetShader(Shader *shader);
   //Returns an array representing the Transform of the node
   const float *GetTransform() const { return glm::value_ptr(GLTransform); }
+  //Returns the Kinematic status of the node
+  bool IsKinematic() { return IsKinematic; }
+  //Sets the Kinematic status of the object
+  void SetKinematic(bool kin) { Kinematic = kin; }
   //Sets the transform of the node. The first 3 parameters are the translation of the node
   //the angle is the amount of rotation in radians and the last 3 parameters are the axis of rotation
   void SetTransform(float transX, float transY, float transZ, float angle, float axisX, float axisY, float axisZ);
