@@ -2,7 +2,7 @@
 #define __UBERNGINE_ENGINE_H__
 #include <vector>
 #include <OGL.h>
-#include <PhysicsManager.h>
+#include <Physics/PhysicsManager.h>
 #include <OGLSystemFacilities.h>
 #include <SystemFacilitiesFactory.h>
 #include <Defs.h>
@@ -22,8 +22,7 @@ class BaseEngine {
 typedef std::vector<Scene*> SceneList;
 typedef SceneList::iterator SceneListIt;
 
-  PhysicsManager *PhyMan;
-
+  PhysicsManager *PhysMan;
 protected:
   SceneList Scenes;
   int CurrScene;
@@ -59,6 +58,7 @@ public:
   int GetWidth() { return Width; }
   int GetHeight() { return Height; }
   short GetDepth() { return Depth; }
+  PhysicsManager *GetPhysicsManager() { return PhysMan; }
   void StepSingleFrame();
   //Implements the engine Main Loop
   void MainLoop();

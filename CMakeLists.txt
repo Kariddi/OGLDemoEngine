@@ -44,7 +44,7 @@ ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp src/SystemFacilities
 endif (WIN32)
 
 if (APPLE AND (NOT IOS))
-ADD_EXECUTABLE(Demo src/GLFWSystemFacilities.cpp src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/PhysicsManager.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/ObjMaterialLoader.cpp main.cpp ${INCS})
+ADD_EXECUTABLE(Demo src/GLFWSystemFacilities.cpp src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/PhysicsManager.cpp src/RigidBody.cpp src/CollisionShape.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/ObjMaterialLoader.cpp main.cpp ${INCS})
 if (CMAKE_BUILD_TYPE MATCHES "Profile")
   #SET_TARGET_PROPERTIES(Demo PROPERTIES COMPILE_FLAGS "-pg" ${COMPILE_FLAGS})
   #SET_TARGET_PROPERTIES(Demo PROPERTIES LINK_FLAGS "-lprofiler" ${LINK_FLAGS})

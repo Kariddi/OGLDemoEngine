@@ -7,12 +7,12 @@ namespace Uberngine {
 
 class Light;
 class Camera;
+class DynamicsWorld;
 
 class Scene : public Node {
 
   std::vector<Light*> Lights;
   Camera *Cam;
-
 public:
 typedef std::vector<Light*> LightList;
 typedef LightList::iterator LightListIt;
@@ -31,6 +31,7 @@ typedef LightList::iterator LightListIt;
   void AddLight(Light *lht) { Lights.push_back(lht); }
   //Gets the list of all the lights
   const LightList &GetLights() const { return Lights; }
+  void SetGravity(float x, float y, float z); 
   //void AssociateShader(MeshId mid, Shader sh);
 };
 

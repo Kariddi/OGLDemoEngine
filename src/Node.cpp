@@ -3,6 +3,8 @@
 #include <Scene.h>
 #include <Shader.h>
 #include <Constants.h>
+#include <Physics/DynamicsWorld.h>
+#include <Engine.h>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -11,9 +13,9 @@
 
 using namespace Uberngine;
 
-Node::Node(BaseEngine *e, Node *parent) : NodeMesh(NULL), RenderCTXs(NULL), ShaderProg(NULL), Parent(NULL),
+Node::Node(BaseEngine *e, Node *parent) : NodeMesh(NULL), RenderCTXs(NULL), ShaderProg(NULL), Parent(NULL), Body(NULL),
                                           GLTransform(1.0f), GLIdxType(NULL), GLNormType(GL_FLOAT), GLTexType(GL_FLOAT),
-                                          Eng(*e), IsKinematic(true) {
+                                          Eng(*e) {
  if (parent != NULL)
    parent->AddChildNode(this); 
 }
@@ -23,6 +25,9 @@ Node::~Node() {
     delete *I;
 //  _MeshTy *Mesh = NodeMesh;
   SetMesh(NULL);
+  SetRigidBody(NULL);
+  if (Parent == NULL)
+    Eng.GetPhysicsManager()->DisposeDynamicsWorld(DynWorld);
 }
 
 void Node::Render(Scene *scene) {
@@ -40,14 +45,6 @@ void Node::Render(Scene *scene) {
     Loc = glGetUniformLocation(Program, "P");
     
     glUniformMatrix4fv(Loc, 1, GL_FALSE, Cam->GetProjMatrix());
-    
-    //Multiplying the Model matrix with the Comulative matrix of the parent
-    //Child nodes move together with parent nodes (if the parent node moves the child node moves with him)
-    if (Parent)
-      Comulative = Parent->Comulative*glm::make_mat4(GetTransform());
-    else
-      Comulative = glm::mat4(1.0f);
-
     //Setting the Model matrix
     Loc = glGetUniformLocation(Program, "M");
     glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(Comulative));
@@ -135,6 +132,19 @@ void Node::GlobalInitialize() {
 void Node::GlobalUpdate() {
   //std::cout << "Global Updating Node" << std::endl;
   Update();
+  if (Body != NULL) {
+    float trans[16];
+    Body->GetPosition(trans);
+    Comulative = glm::make_mat4(trans);
+  } else {    
+  //Multiplying the Model matrix with the Comulative matrix of the parent
+  //Child nodes move together with parent nodes (if the parent node moves the child node moves with him)
+    if (Parent)
+      Comulative = Parent->Comulative*glm::make_mat4(GetTransform());
+    else
+      Comulative = glm::mat4(1.0f);
+  }
+
   for (NodeListIt I = Children.begin(), E = Children.end(); I != E; ++I)
     (*I)->GlobalUpdate();
 }
@@ -145,6 +155,7 @@ void Node::AddChildNode(Node *node) {
     OldPChildren.erase(std::find(OldPChildren.begin(), OldPChildren.end(), node));
   }
   node->Parent = this;
+  node->DynWorld = this->DynWorld;
   Children.push_back(node);
 }
 
@@ -274,12 +285,29 @@ void Node::SetShader(Shader *shader) {
   ShaderProg = shader;
 }
 
+void Node::SetRigidBody(RigidBody *rb) {
+  if (Body != NULL) {
+    DynWorld->RemoveRigidBody(Body);
+    delete Body;
+  }
+  if (rb != NULL) {
+    rb->SetKinematic(true);
+    rb->SetPosition(GetTransform());
+    rb->SetKinematic(false);
+    DynWorld->AddRigidBody(rb);
+  }
+  Body = rb;
+}
+
 void Node::SetTransform(float transX, float transY, float transZ, float angle, float axisX, 
                         float axisY, float axisZ) {
-  GLTransform = glm::mat4(1.0f);
+  if (!IsKinematic())
+    return;
   float sint = sinf(angle/2);
-  GLTransform = glm::translate(GLTransform, glm::vec3(transX, transY, transZ));
+  GLTransform = glm::translate(glm::mat4(), glm::vec3(transX, transY, transZ));
   glm::quat Rot(cosf(angle/2), axisX*sint, axisY*sint, axisZ*sint);
   GLTransform *= glm::mat4_cast(glm::normalize(Rot));
+  if (Body)
+    Body->SetPosition(glm::value_ptr(GLTransform));
 }
 

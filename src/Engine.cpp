@@ -10,7 +10,7 @@ BaseEngine::BaseEngine() : CurrScene(0), DepthTestEnabled(false),
                            PreviousFrameTime(0.0f), 
                            FrameTimeDelta(0.0f),
                            Width(0), Height(0), Depth(0) {
-  PhyMan = new PhysicsManager;
+  PhysMan = new PhysicsManager;
 }
 
 /*#ifdef IOS_SYS
@@ -24,6 +24,8 @@ Engine::Engine(UIView *view) {
 BaseEngine::~BaseEngine() {
   for (SceneListIt I = Scenes.begin(), E = Scenes.end(); I != E; ++I)
     delete *I;
+
+  delete PhysMan;
 
   BaseSystemFacilitiesFactory::Destroy();
 }

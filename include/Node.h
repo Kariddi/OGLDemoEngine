@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp> //translate, rotate, scale,
 #include <glm/gtc/type_ptr.hpp> //value_ptr
 #include <glm/gtc/quaternion.hpp>
+#include <Physics/RigidBody.h>
 #include <Mesh.h>
 #include <GLTraits.h>
 
@@ -14,6 +15,8 @@ namespace Uberngine {
 class BaseEngine;
 class Shader;
 class Scene;
+class RigidBody;
+class DynamicsWorld;
 
 class Node {
 
@@ -31,13 +34,13 @@ struct PartRenderCtx {
   //GLuint Samplers[3];
   Shader *ShaderProg;
   Node *Parent;
+  RigidBody *Body;
   glm::mat4 Comulative;
   glm::mat4 GLTransform;
   static glm::quat IdQuat;
   GLenum *GLIdxType;
   GLenum GLNormType;
   GLenum GLTexType;
-  bool Kinematic;
   //bool Hooked;
 
 protected:
@@ -46,6 +49,8 @@ typedef NodeList::iterator NodeListIt;
 
   NodeList Children;
   BaseEngine &Eng;
+  DynamicsWorld *DynWorld;
+ 
   void GlobalInitialize();
   void Render(Scene *scene);
   void GlobalUpdate();
@@ -62,12 +67,21 @@ public:
   void SetMesh(Mesh *mesh);
   //Attaches a shader to this Node
   void SetShader(Shader *shader);
+  void SetRigidBody(RigidBody *rb);
   //Returns an array representing the Transform of the node
   const float *GetTransform() const { return glm::value_ptr(GLTransform); }
   //Returns the Kinematic status of the node
-  bool IsKinematic() { return IsKinematic; }
+  bool IsKinematic() {
+    if (Body != NULL)
+      return Body->IsKinematic();
+    return true;
+  }
   //Sets the Kinematic status of the object
-  void SetKinematic(bool kin) { Kinematic = kin; }
+  void SetKinematic(bool kin) {
+    if (Body != NULL) {
+      Body->SetKinematic(kin);
+    }
+  }
   //Sets the transform of the node. The first 3 parameters are the translation of the node
   //the angle is the amount of rotation in radians and the last 3 parameters are the axis of rotation
   void SetTransform(float transX, float transY, float transZ, float angle, float axisX, float axisY, float axisZ);
