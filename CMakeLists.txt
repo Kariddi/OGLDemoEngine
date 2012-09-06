@@ -4,7 +4,7 @@ project (Demo)
 include_directories ("${PROJECT_SOURCE_DIR}/include")
 file(GLOB_RECURSE INCS "include/*.h")
 FIND_PACKAGE(Bullet REQUIRED)
-SET(EXTRA_LIBS ${EXTRALIBS} ${BULLET_LIBRARIES})
+SET(EXTRA_LIBS ${EXTRA_LIBS} ${BULLET_LIBRARIES})
 INCLUDE_DIRECTORIES(${BULLET_INCLUDE_DIR})
 if (APPLE AND (NOT IOS))
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)
@@ -27,10 +27,11 @@ SET(CMAKE_CXX_LINK_EXECUTABLE
 endif (UNIX AND (NOT APPLE))
 
 if (WIN32)
-ADD_LIBRARY(glfw STATIC IMPORTED)
+#ADD_LIBRARY(glfw STATIC IMPORTED)
 ADD_LIBRARY(opengl32 STATIC IMPORTED)
-SET_TARGET_PROPERTIES(glfw PROPERTIES
-    IMPORTED_LOCATION GLFW.lib)
+FIND_LIBRARY(GLFW_LIBRARY glfw "${PROJECT_SOURCE_DIR}/")
+#SET_TARGET_PROPERTIES(glfw PROPERTIES
+#    IMPORTED_LOCATION GLFW.lib)
 SET_TARGET_PROPERTIES(opengl32 PROPERTIES
     IMPORTED_LOCATION opengl32.lib)
 endif (WIN32)
@@ -40,7 +41,7 @@ ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp src/SystemFacilities
 endif (UNIX AND (NOT APPLE))
 
 if (WIN32) 
-ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/PhysicsManager.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/ObjLoader.cpp src/ObjMaterialLoader.cpp main_win32.cpp ${INCS})
+ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp src/SystemFacilitiesFactory.cpp src/Texture.cpp src/Engine.cpp src/PhysicsManager.cpp src/RigidBody.cpp src/CollisionShape.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/Camera.cpp src/ObjMaterialLoader.cpp main_win32.cpp ${INCS})
 endif (WIN32)
 
 if (APPLE AND (NOT IOS))
@@ -71,5 +72,5 @@ endif (APPLE AND IOS)
 
 if (WIN32)
 ADD_DEFINITIONS(/DGLEW_STATIC)
-target_link_libraries(Demo opengl32 ${EXTRA_LIBS})
+target_link_libraries(Demo opengl32 ${GLFW_LIBRARY} ${EXTRA_LIBS})
 endif (WIN32)

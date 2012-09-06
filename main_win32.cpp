@@ -3,7 +3,7 @@
 #include <Node.h>
 #include <Scene.h>
 #include <Shader.h>
-#include <Loader.h>
+#include <ObjLoader.h>
 #include <Camera.h>
 #include <Constants.h>
 #include <iostream>
@@ -22,8 +22,8 @@ int main(int argc, char **argv)
   //Loading Meshes
   Mesh *mesh = NULL;
   Mesh *mesh2 = NULL;
-  ObjLoader::Loader load("E:\\Demo\\");
-  mesh = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_BYTE>("Torus.obj", false);
+  Loader::ObjLoader<UBE_LOADER_BYTE, UBE_LOADER_BYTE> load("E:\\DemoData\\");
+  mesh = load.loadMesh("Torus.obj", false);
   
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
   SC->SetCamera(Cam);
   //Set mesh on the node (Torus mesh)
   MyNode->SetMesh(mesh);
-  mesh2 = load.loadMesh<UBE_LOADER_BYTE, UBE_LOADER_BYTE>("Spiderman.obj", false);
+  mesh2 = load.loadMesh("Spiderman.obj", false);
   //Set mesh on the second node (Spiderman mesh)
   MyNode2->SetMesh(mesh2);
   //Adding a light
@@ -52,9 +52,9 @@ int main(int argc, char **argv)
   //Load the scene
   Eng.LoadScene(0);
   //Creating and adding shaders to the nodes
-  Shader *shad = new Shader("..\\test.vert", "..\\no_tex_test.frag");
+  Shader *shad = new Shader("E:\\DemoData\\test.vert", "E:\\DemoData\\no_tex_test.frag");
   MyNode->SetShader(shad);
-  Shader *shad2 = new Shader("..\\test.vert", "..\\test.frag");
+  Shader *shad2 = new Shader("E:\\DemoData\\test.vert", "E:\\DemoData\\test.frag");
  MyNode2->SetShader(shad2);
   //Setting node and camera transformations
   MyNode2->SetTransform(0.0f, 0.0f, -0.0f, 0.0f, 0.0f,0.0f,0.0f);

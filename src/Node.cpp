@@ -223,7 +223,8 @@ void Node::SetMesh(Mesh *mesh) {
       glTexImage2D(GL_TEXTURE_2D, 0, mesh->Textures[i]->type,  mesh->Textures[i]->width, 
                    mesh->Textures[i]->height, 0, mesh->Textures[i]->type, GL_UNSIGNED_BYTE, 
                    mesh->Textures[i]->imageData);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      glGenerateMipmap(GL_TEXTURE_2D);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
     }
     glBindTexture(GL_TEXTURE_2D, 0);
   }

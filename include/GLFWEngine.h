@@ -1,6 +1,7 @@
 #ifndef __UBERNGINE_ENGINE_UBE_GLFW_H__
 #define __UBERNGINE_ENGINE_UBE_GLFW_H__
 #include <GLFWSystemFacilitiesFactory.h>
+#include <GL/internal.h>
 #include <Engine.h>
 
 namespace Uberngine {
