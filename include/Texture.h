@@ -14,15 +14,16 @@
 
 #include <math.h>
 
-typedef	struct									
+struct Texture									
 {
 	GLubyte	* imageData;									// Image Data (Up To 32 Bits)
 	GLuint	bpp;											// Image Color Depth In Bits Per Pixel
 	GLuint	width;											// Image Width
 	GLuint	height;											// Image Height
-	GLuint	texID;											// Texture ID Used To Select A Texture
-	GLuint	type;											// Image Type (GL_RGB, GL_RGBA)
-} Texture;	
+        GLuint	format;										// Image Type (GL_RGB, GL_RGBA)
+	GLenum  type;
+        ~Texture() { free(imageData); }
+};	
 
 typedef struct
 {
@@ -45,4 +46,7 @@ typedef struct
 bool LoadTGA(Texture * texture, const char * filename);
 bool LoadCompressedTGA(Texture * texture, const char * filename, FILE * fTGA);
 bool LoadUncompressedTGA(Texture * texture, const char * filename, FILE * fTGA);
+bool LoadPNG(Texture *texture, const char *filename);
+bool LoadJPG(Texture *texture, const char *filename);
+
 #endif

@@ -219,10 +219,11 @@ void Node::SetMesh(Mesh *mesh) {
     Textures = new GLuint[tex_num];
     glGenTextures(mesh->Textures.size(), Textures);
     for (int i = 0; i < tex_num; ++i) {
+      Texture &tex = *mesh->Textures[i];
       glBindTexture(GL_TEXTURE_2D, Textures[i]);
-      glTexImage2D(GL_TEXTURE_2D, 0, mesh->Textures[i]->type,  mesh->Textures[i]->width, 
-                   mesh->Textures[i]->height, 0, mesh->Textures[i]->type, GL_UNSIGNED_BYTE, 
-                   mesh->Textures[i]->imageData);
+      glTexImage2D(GL_TEXTURE_2D, 0, tex.format,  tex.width, 
+                   tex.height, 0, tex.format, tex.type, 
+                   tex.imageData);
       glGenerateMipmap(GL_TEXTURE_2D);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
     }

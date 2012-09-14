@@ -1,5 +1,6 @@
 #include <Texture.h>
 #include <cstring>
+#include <png.h>
 
 TGAHeader tgaheader;									// TGA header
 TGA tga;												// TGA image data
@@ -60,6 +61,7 @@ bool LoadUncompressedTGA(Texture * texture, const char * filename, FILE * fTGA)	
 	texture->width  = tga.header[1] * 256 + tga.header[0];					// Determine The TGA Width	(highbyte*256+lowbyte)
 	texture->height = tga.header[3] * 256 + tga.header[2];					// Determine The TGA Height	(highbyte*256+lowbyte)
 	texture->bpp	= tga.header[4];										// Determine the bits per pixel
+        texture->type   = GL_UNSIGNED_BYTE;
 	tga.Width		= texture->width;										// Copy width into local structure						
 	tga.Height		= texture->height;										// Copy height into local structure
 	tga.Bpp			= texture->bpp;											// Copy BPP into local structure
@@ -75,9 +77,9 @@ bool LoadUncompressedTGA(Texture * texture, const char * filename, FILE * fTGA)	
 	}
 
 	if(texture->bpp == 24)													// If the BPP of the image is 24...
-		texture->type	= GL_RGB;											// Set Image type to GL_RGB
+		texture->format	= GL_RGB;											// Set Image type to GL_RGB
 	else																	// Else if its 32 BPP
-		texture->type	= GL_RGBA;											// Set image type to GL_RGBA
+		texture->format	= GL_RGBA;											// Set image type to GL_RGBA
 
 	tga.bytesPerPixel	= (tga.Bpp / 8);									// Compute the number of BYTES per pixel
 	tga.imageSize		= (tga.bytesPerPixel * tga.Width * tga.Height);		// Compute the total amout ofmemory needed to store data
@@ -127,6 +129,7 @@ bool LoadCompressedTGA(Texture * texture, const char * filename, FILE * fTGA)		/
 	texture->width  = tga.header[1] * 256 + tga.header[0];					// Determine The TGA Width	(highbyte*256+lowbyte)
 	texture->height = tga.header[3] * 256 + tga.header[2];					// Determine The TGA Height	(highbyte*256+lowbyte)
 	texture->bpp	= tga.header[4];										// Determine Bits Per Pixel
+	texture->type   = GL_UNSIGNED_BYTE;
 	tga.Width		= texture->width;										// Copy width to local structure
 	tga.Height		= texture->height;										// Copy width to local structure
 	tga.Bpp			= texture->bpp;											// Copy width to local structure
@@ -142,9 +145,9 @@ bool LoadCompressedTGA(Texture * texture, const char * filename, FILE * fTGA)		/
 	}
 
 	if(texture->bpp == 24)													// If the BPP of the image is 24...
-		texture->type	= GL_RGB;											// Set Image type to GL_RGB
+		texture->format	= GL_RGB;											// Set Image type to GL_RGB
 	else																	// Else if its 32 BPP
-		texture->type	= GL_RGBA;											// Set image type to GL_RGBA
+		texture->format	= GL_RGBA;											// Set image type to GL_RGBA
 
 	tga.bytesPerPixel	= (tga.Bpp / 8);									// Compute BYTES per pixel
 	tga.imageSize		= (tga.bytesPerPixel * tga.Width * tga.Height);		// Compute amout of memory needed to store image
@@ -309,4 +312,130 @@ bool LoadCompressedTGA(Texture * texture, const char * filename, FILE * fTGA)		/
 	while(currentpixel < pixelcount);													// Loop while there are still pixels left
 	fclose(fTGA);																		// Close the file
 	return true;																		// return success
+}
+
+void CleanPNG(FILE *fp, png_structp p_struct, png_infop p_info) {
+
+  if (fp != NULL)
+    fclose(fp);
+  if (p_struct != NULL)
+    png_destroy_read_struct(&p_struct, &p_info, NULL);
+}
+
+bool LoadPNG(Texture *texture, const char *filename) {
+  char header[8];
+  FILE *image_f = NULL;
+  png_structp png_ptr = NULL;
+  png_infop info_ptr = NULL;
+  png_bytepp row_pointers = NULL;
+  int width, height, color_type, bit_depth, number_of_passes;
+  int channels, row_bytes;
+  GLuint format;
+  GLenum type;
+
+  image_f = fopen(filename, "rb");
+
+  if (image_f == NULL)
+    return false;
+  fread(header, 1, 8, image_f);
+  if (png_sig_cmp((png_const_bytep) header, 0, 8)) {
+    CleanPNG(image_f, png_ptr, info_ptr);
+    return false;
+  }
+
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+  if (png_ptr == NULL) {
+    CleanPNG(image_f, png_ptr, info_ptr);
+    return false;
+  }
+
+  info_ptr = png_create_info_struct(png_ptr);
+
+  if (info_ptr == NULL) {
+    CleanPNG(image_f, png_ptr, info_ptr);
+    return false;
+  }
+  
+  if (setjmp(png_jmpbuf(png_ptr))) {
+    CleanPNG(image_f, png_ptr, info_ptr);
+    return false;
+  }
+
+  png_init_io(png_ptr, image_f);
+  png_set_sig_bytes(png_ptr, 8);
+  png_read_info(png_ptr, info_ptr);
+
+  width = png_get_image_width(png_ptr, info_ptr);
+  height = png_get_image_height(png_ptr, info_ptr);
+  color_type = png_get_color_type(png_ptr, info_ptr);
+  bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+  channels = png_get_channels(png_ptr, info_ptr);
+
+  if (bit_depth <= 8) {
+    type = GL_UNSIGNED_BYTE;
+  } else if (bit_depth == 16) {
+    type = GL_UNSIGNED_SHORT;
+  } else {
+    CleanPNG(image_f, png_ptr, info_ptr);
+    return false;
+  }
+ 
+  switch (color_type) {
+  case PNG_COLOR_TYPE_GRAY:
+    format = GL_LUMINANCE;
+    png_set_expand(png_ptr);
+    break;
+  case PNG_COLOR_TYPE_GRAY_ALPHA:
+    format = GL_LUMINANCE_ALPHA;
+    png_set_expand(png_ptr);
+    break;
+  case PNG_COLOR_TYPE_RGB:
+    format = GL_RGB;
+    break;
+  case PNG_COLOR_TYPE_RGB_ALPHA:
+    format = GL_RGBA;
+    break;
+  default:
+    CleanPNG(image_f, png_ptr, info_ptr);
+    return false; 
+  }
+  
+  png_read_update_info(png_ptr, info_ptr);
+
+  row_bytes = png_get_rowbytes(png_ptr, info_ptr);
+  row_pointers = (png_bytepp) png_malloc(png_ptr, height * sizeof(png_bytep));
+  for (int i = 0; i < height; ++i)
+    row_pointers[i] = (png_bytep) png_malloc(png_ptr, row_bytes);
+
+  if (setjmp(png_jmpbuf(png_ptr))) {
+    for (int i = 0; i < height; ++i)
+      png_free(png_ptr, row_pointers[i]);
+    png_free(png_ptr, row_pointers);
+    CleanPNG(image_f, png_ptr, info_ptr);
+    return false;
+  }
+  png_read_image(png_ptr, row_pointers);
+  texture->width = width;
+  texture->height = height;
+  texture->bpp = channels * bit_depth;
+  texture->format = format;
+  texture->type = type;
+
+  texture->imageData = (GLubyte*) malloc(sizeof(GLubyte) * height * row_bytes);
+  for (int i = height-1; i >= 0 ; --i)
+    memcpy(texture->imageData + i*row_bytes, row_pointers[height-i-1], row_bytes);
+
+  for (int i = 0; i < height; ++i)
+    png_free(png_ptr, row_pointers[i]);
+  png_free(png_ptr, row_pointers);
+
+
+  CleanPNG(image_f, png_ptr, info_ptr);
+
+  return true;
+}
+
+bool LoadJPG(Texture *texture, const char *filename) {
+  return false;
 }

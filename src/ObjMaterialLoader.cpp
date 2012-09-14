@@ -63,12 +63,24 @@ bool ObjMaterialLoader::parseAmbient() {
 
 bool ObjMaterialLoader::parseDiffuseMap() {
   string Extension = ReadData.substr(ReadData.find_last_of('.')+1);
-  //Only support TGA files for now
-  if (Extension != "tga")
+  bool is_tga = false, is_png = false;
+  //Only support TGA and PNG files for now
+  if (Extension == "tga")
+    is_tga = true;
+  else if (Extension == "png")
+    is_png = true;
+  else
     return false;
+
   Texture *NewTexture = new Texture;
 
-  if (LoadTGA(NewTexture, (DirectoryPath + ReadData).c_str())) {
+  if (is_tga && LoadTGA(NewTexture, (DirectoryPath + ReadData).c_str())) {
+    TexList->push_back(NewTexture);
+    CurrentMaterial->TextureIdx.push_back(TexList->size()-1);
+    return true;
+  }
+
+  if (is_png && LoadPNG(NewTexture, (DirectoryPath + ReadData).c_str())) {
     TexList->push_back(NewTexture);
     CurrentMaterial->TextureIdx.push_back(TexList->size()-1);
     return true;
