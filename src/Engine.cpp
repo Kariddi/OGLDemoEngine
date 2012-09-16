@@ -1,11 +1,12 @@
 #include <Node.h>
 #include <Scene.h>
+#include <GUI/GUI.h>
 #include <Engine.h>
 
 using namespace std;
 using namespace Uberngine;
 
-BaseEngine::BaseEngine() : CurrScene(0), DepthTestEnabled(false),
+BaseEngine::BaseEngine() : Gui(NULL), CurrScene(0), DepthTestEnabled(false),
                            Sys(NULL), FrameTime(0.0f),
                            PreviousFrameTime(0.0f), 
                            FrameTimeDelta(0.0f),
@@ -28,6 +29,12 @@ BaseEngine::~BaseEngine() {
   delete PhysMan;
 
   BaseSystemFacilitiesFactory::Destroy();
+}
+
+GUI *BaseEngine::GetGUI() {
+  if (Gui == NULL)
+    Gui = new GUI;
+  return Gui;
 }
 
 //Initializes the Engine
@@ -55,6 +62,8 @@ void BaseEngine::RenderScene() {
     glClear(GL_DEPTH_BUFFER_BIT);
   }
   Scenes[CurrScene]->RenderScene();
+  if (Gui != NULL)
+    Gui->RenderGUI();
   //glfwSwapBuffers();
   Sys->SwapBuffers();
 }

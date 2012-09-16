@@ -16,6 +16,7 @@ namespace Uberngine {
 
 class Scene;
 class Node;
+class GUI;
 //class SystemFacilities;
 
 class BaseEngine {
@@ -23,6 +24,7 @@ typedef std::vector<Scene*> SceneList;
 typedef SceneList::iterator SceneListIt;
 
   PhysicsManager *PhysMan;
+  GUI *Gui;
 protected:
   SceneList Scenes;
   int CurrScene;
@@ -39,6 +41,7 @@ public:
   virtual ~BaseEngine();
   //Initializes the engine
 //  bool Init(const char *window_title, int width, int height, int c_bits, int d_bits, int s_bits, bool fullscreen);
+  GUI *GetGUI();
   //Updates the scene
   void UpdateScene();
   //Renders the scene

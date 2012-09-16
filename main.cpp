@@ -8,6 +8,8 @@
 #include <Constants.h>
 #include <iostream>
 #include <GL/glfw.h>
+#include <GUI/GUI.h>
+#include <GUI/GUILabel.h>
 #include <cstring>
 #include <cmath>
 
@@ -22,7 +24,12 @@ int main(int argc, char **argv)
   //Loading Meshes
   Mesh *mesh = NULL;
   Mesh *mesh2 = NULL;
- 
+  GUI *gui = Eng.GetGUI();
+  GUILabel *lab = new GUILabel(gui);
+  lab->SetXPos(100);
+  lab->SetYPos(100);
+  lab->SetText("Testo di prova!!");
+  gui->AddElement(lab);
   Loader::ObjLoader<UBE_LOADER_BYTE, UBE_LOADER_BYTE> load("./");
   mesh = load.loadMesh("Torus.obj", false);
   
@@ -67,7 +74,7 @@ int main(int argc, char **argv)
   //Main loop
   int framecount = 0;
   float cum_time = 0.0f;
-
+  
   PhysicsManager *PyMan = Eng.GetPhysicsManager();
   CollisionShape *CircleShape = PyMan->GetSphereShape(2);
   CollisionShape *BoxShape = PyMan->GetBoxShape(100,1,100);
@@ -117,9 +124,11 @@ int main(int argc, char **argv)
     cum_time += Eng.GetFrameTimeDelta();
     ++framecount;
     if (cum_time > 5.0f) {
-      std::cout << "FPS: " << framecount / cum_time << " Passed time: " << cum_time << std::endl;
+      std::stringstream ss;
+      ss << "FPS: " << framecount / cum_time << " Passed time: " << cum_time << std::endl;
       framecount = 0;
       cum_time = 0.0f;
+      lab->SetText(ss.str().c_str());
     }
   }
   //delete SC;
