@@ -3,9 +3,15 @@
 
 #include <OGLSystemFacilities.h>
 
+namespace {
+  class GLFWwindow;
+}
 namespace Uberngine {
 
 class GLFWSystemFacilities : public OGLSystemFacilities {
+
+  GLFWwindow *window;
+
 public:
   GLFWSystemFacilities();
   virtual bool CreateAndSetRenderContext(int *width, int *height, int c_bits, int d_bits, int s_bits, 

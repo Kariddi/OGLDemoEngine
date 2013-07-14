@@ -1,16 +1,23 @@
+#include <cstdlib>
+#include <iostream>
 #include <GLFWSystemFacilities.h>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 
 using namespace Uberngine;
 
-GLFWSystemFacilities::GLFWSystemFacilities() : OGLSystemFacilities(0) { 
+GLFWSystemFacilities::GLFWSystemFacilities() : OGLSystemFacilities(0),
+  window(NULL) { 
+
   glfwInit(); 
 }
 
 bool GLFWSystemFacilities::CreateAndSetRenderContext(int *width, int *height, int c_bits, int d_bits, int s_bits, 
                                                      bool fullscreen) {
-  int mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
   int r_bits, g_bits, b_bits, a_bits;
+  GLFWmonitor *monitor = NULL;
+  if (fullscreen) {
+    monitor = glfwGetPrimaryMonitor();
+  } 
   switch (c_bits) {
     case 32:
       r_bits = 8;
@@ -33,23 +40,37 @@ bool GLFWSystemFacilities::CreateAndSetRenderContext(int *width, int *height, in
     default:
       return false;
   }
+  
+  glfwWindowHint(GLFW_RED_BITS, r_bits);
+  glfwWindowHint(GLFW_GREEN_BITS, g_bits);
+  glfwWindowHint(GLFW_BLUE_BITS, b_bits);
+  glfwWindowHint(GLFW_ALPHA_BITS, a_bits);
+  glfwWindowHint(GLFW_DEPTH_BITS, d_bits);
+  glfwWindowHint(GLFW_STENCIL_BITS, s_bits);
 
-  int ret_val = glfwOpenWindow(*width, *height, r_bits, g_bits, b_bits, a_bits, d_bits, s_bits, mode);
-  return (ret_val == GL_TRUE) ? true : false;
+  window = glfwCreateWindow(*width, *height, "", monitor, NULL);
+  glfwMakeContextCurrent(window);
+  return (window != NULL) ? true : false;
 }
 
 void GLFWSystemFacilities::GetMousePosition(int *x, int *y) {
-  glfwGetMousePos(x, y);
+  double d_x = 0.0, d_y = 0.0;
+  glfwGetCursorPos(window, &d_x, &d_y);
+  *x = static_cast<int>(d_x);
+  *y = static_cast<int>(d_y);
 }
 
 bool GLFWSystemFacilities::GetPressedKey(int key) {
-  return (glfwGetKey(key) == GLFW_PRESS) ? true : false;
+  return (glfwGetKey(window, key) == GLFW_PRESS) ? true : false;
 }
 
 float GLFWSystemFacilities::GetTime() { return static_cast<float>(glfwGetTime()); }
 
-void GLFWSystemFacilities::SwapBuffers() { glfwSwapBuffers(); }
+void GLFWSystemFacilities::SwapBuffers() { 
+  glfwPollEvents();
+  glfwSwapBuffers(window); 
+}
 
-void GLFWSystemFacilities::SetWindowTitle(const char *title) { glfwSetWindowTitle(title); }
+void GLFWSystemFacilities::SetWindowTitle(const char *title) { glfwSetWindowTitle(window, title); }
 
 GLFWSystemFacilities::~GLFWSystemFacilities() { glfwTerminate(); }
