@@ -35,7 +35,7 @@ typedef ElementVectorTy::iterator ElementVectorIt;
   FontInfo *FInfo;
   GUI();
   void RenderGUI();
-  friend class BaseEngine;
+  friend class PureEngine;
 public:
   ~GUI();
   const FontInfo *GetFontInfo() const { return FInfo; }

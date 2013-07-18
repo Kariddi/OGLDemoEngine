@@ -5,7 +5,7 @@
 
 using namespace Uberngine;
 
-GLFWSystemFacilities::GLFWSystemFacilities() : OGLSystemFacilities(0),
+GLFWSystemFacilities::GLFWSystemFacilities() : OGLSystemFacilities<GLFWSystemFacilities>(0),
   window(nullptr) { 
 
   glfwInit(); 

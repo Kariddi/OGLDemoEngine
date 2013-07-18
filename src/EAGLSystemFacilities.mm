@@ -2,7 +2,9 @@
 
 using namespace Uberngine;
 
-EAGLSystemFacilities::EAGLSystemFacilities(CAEAGLLayer *layer) : OGLSystemFacilities(0), EAGLLayer(layer) {
+EAGLSystemFacilities::EAGLSystemFacilities(CAEAGLLayer *layer) : OGLSystemFacilities<EAGLSystemFacilities>(0), 
+  EAGLLayer(layer) {
+  
   GLCtx = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
   if (GLCtx != nil)
     [EAGLContext setCurrentContext:GLCtx];
@@ -52,10 +54,7 @@ bool EAGLSystemFacilities::CreateAndSetRenderContext(int *width, int *height, in
   return true;
 }
 
-void EAGLSystemFacilities::GetMousePosition(int *x, int *y) {}
-
-bool EAGLSystemFacilities::GetPressedKey(int key) { return false; }
-
+// TODO: Implement
 float EAGLSystemFacilities::GetTime() { return 0.0f; }
 
 void EAGLSystemFacilities::SwapBuffers() {

@@ -7,7 +7,6 @@
 #include <Camera.h>
 #include <Constants.h>
 #include <iostream>
-#include <GL/glfw.h>
 #include <GUI/GUI.h>
 #include <GUI/GUILabel.h>
 #include <cstring>

@@ -10,6 +10,7 @@
 #define OGL_ES
 #else
 #include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
 #define OGL
 #endif
 

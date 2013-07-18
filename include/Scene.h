@@ -7,6 +7,7 @@ namespace Uberngine {
 
 class Camera;
 class PhysicsManager;
+class Node;
 
 class Scene {
 
@@ -20,7 +21,7 @@ class Scene {
   DynamicsWorld* DynWorld;
 
   Scene(PhysicsManager* p_manager);
-  friend class BaseEngine;
+  friend class PureEngine;
 
 public:
 

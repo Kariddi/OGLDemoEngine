@@ -6,12 +6,13 @@
 
 namespace Uberngine {
 
-class OGLSystemFacilities : public SystemFacilities {
+template<typename Derived>
+class OGLSystemFacilities : public SystemFacilities<Derived> {
 protected:
   GLuint DrawFramebuffer;
   GLuint Renderbuffers[2];
 public:
-  OGLSystemFacilities(GLuint dfb) : SystemFacilities(), DrawFramebuffer(0) { 
+  OGLSystemFacilities(GLuint dfb) : SystemFacilities<Derived>(), DrawFramebuffer(0) { 
     Renderbuffers[0] = 0;  
     Renderbuffers[1] = 0;
   }

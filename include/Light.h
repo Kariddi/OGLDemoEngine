@@ -3,6 +3,7 @@
 #include <vector>
 #include <GlobalTypes.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 /*
   This class represents a light that can be added to a scene
 */
