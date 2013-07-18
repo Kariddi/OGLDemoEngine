@@ -36,11 +36,11 @@ int main(int argc, char **argv)
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
   //Creating nodes
-  Node *MyNode = new Node(&Eng, SC);
-  Node *MyNode2 = new Node(&Eng, MyNode);
-  Node *MyNode3 = new Node(&Eng, SC);
+  Node *MyNode = new Node(SC->GetRootNode());
+  Node *MyNode2 = new Node(MyNode);
+  Node *MyNode3 = new Node(SC->GetRootNode());
   //Creating the camera
-  Camera *Cam = new Camera(&Eng, SC);
+  Camera *Cam = new Camera(SC);
   //Set perspective parameters
   Cam->SetPerspectiveCamera(60.0f, (float)4/3, 0.1f, 1000.0f);
   //Adding camera to the scene
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
   //Set mesh on the second node (Spiderman mesh)
   MyNode2->SetMesh(mesh2);
   //Adding a light
-  Light *MyLight = new Light(Light::DIRECTIONAL, 0.0f, 0.0f,0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f);
+  Light *MyLight = new Light(Light::LightType::DIRECTIONAL, 0.0f, 0.0f,0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f);
   //Adding the node to the scene
 //  SC->AddChildNode(MyNode);
   //Adding the second node as child of the first

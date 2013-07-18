@@ -1,84 +1,72 @@
 #ifndef __UBERNGINE_NODE_H__
 #define __UBERNGINE_NODE_H__
 #include <vector>
-#include <OGL.h>
 #include <glm/glm.hpp> //vec3, vec4, ivec4, mat4
 #include <glm/gtc/matrix_transform.hpp> //translate, rotate, scale,
 #include <glm/gtc/type_ptr.hpp> //value_ptr
 #include <glm/gtc/quaternion.hpp>
+#include <Renderers/GLRenderer.h>
+#include <Renderers/RendererTraits.h>
 #include <Physics/RigidBody.h>
-#include <Mesh.h>
-#include <GLTraits.h>
 
 namespace Uberngine {
 
-class BaseEngine;
-class Shader;
+//class Shader;
 class Scene;
-class RigidBody;
-class DynamicsWorld;
+//class RigidBody;
+class PhysicsManager;
+class Mesh;
 
 class Node {
 
-struct PartRenderCtx {
-  GLuint PartVAO;
-  GLuint VBO;
-};
-
-//typedef Mesh<Traits::MeshVertexType, Traits::MeshIDXType> _MeshTy;
-//typedef GLMeshTraits<Traits::MeshVertexType, Traits::MeshIDXType> GLTraits;
-  Mesh *NodeMesh;
-  PartRenderCtx *RenderCTXs;
-  GLuint VertVBO;
-  GLuint *Textures;
-  //GLuint Samplers[3];
-  Shader *ShaderProg;
-  Node *Parent;
-  RigidBody *Body;
+  Node* Parent;
+  Scene* CurrentScene;
+  RigidBody* Body;
   glm::mat4 Comulative;
   glm::mat4 GLTransform;
   static glm::quat IdQuat;
-  GLenum *GLIdxType;
-  GLenum GLNormType;
-  GLenum GLTexType;
-  //bool Hooked;
+
+  RendererTraits<OpenGL>::RendererType Rend;
+
+  friend class Scene;
 
 protected:
 typedef std::vector<Node*> NodeList;
 typedef NodeList::iterator NodeListIt;
 
   NodeList Children;
-  BaseEngine &Eng;
-  DynamicsWorld *DynWorld;
  
   void GlobalInitialize();
-  void Render(Scene *scene);
+  void Render(Scene* scene);
   void GlobalUpdate();
+  //void SetDynamicsWorld(DynamicsWorld *d_world) { DynWorld = d_world; }
+  Node();
+  virtual ~Node();
 
 public:
 //typedef _MeshTy MeshTy;
-  Node(BaseEngine *e, Node *parent);
-  virtual ~Node();
+  Node(Node* parent);
+  Node(Scene* parent);
   //For physics use ...
   //void AttachRigidBody();
   //Adds a child node to this node
-  void AddChildNode(Node *node);
+  void AddChildNode(Node* node);
   //Attaches a mesh to this Node
-  void SetMesh(Mesh *mesh);
+  void SetMesh(Mesh* mesh);
   //Attaches a shader to this Node
-  void SetShader(Shader *shader);
-  void SetRigidBody(RigidBody *rb);
+  void SetShader(Shader* shader);
+  void SetRigidBody(RigidBody* rb);
   //Returns an array representing the Transform of the node
-  const float *GetTransform() const { return glm::value_ptr(GLTransform); }
+  const float* GetTransform() const { return glm::value_ptr(GLTransform); }
   //Returns the Kinematic status of the node
   bool IsKinematic() {
-    if (Body != NULL)
+    if (Body != nullptr)
       return Body->IsKinematic();
     return true;
   }
   //Sets the Kinematic status of the object
   void SetKinematic(bool kin) {
-    if (Body != NULL) {
+    if (Body != nullptr) {
       Body->SetKinematic(kin);
     }
   }

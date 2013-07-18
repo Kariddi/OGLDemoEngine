@@ -2,9 +2,9 @@
 #define __LOADER_OBJLOADER_H__
 #include <vector>
 #include <string>
+#include <iostream>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <map>
 #include <limits>
 #include <algorithm>

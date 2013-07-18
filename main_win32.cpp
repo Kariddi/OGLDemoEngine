@@ -28,10 +28,10 @@ int main(int argc, char **argv)
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
   //Creating nodes
-  Node *MyNode = new Node(&Eng, SC);
-  Node *MyNode2 = new Node(&Eng, MyNode);
+  Node *MyNode = new Node(SC->GetRootNode());
+  Node *MyNode2 = new Node(MyNode);
   //Creating the camera
-  Camera *Cam = new Camera(&Eng, SC);
+  Camera *Cam = new Camera(SC->GetRootNode());
   //Set perspective parameters
   Cam->SetPerspectiveCamera(60.0f, 4/3, 1.0f, 1000.0f);
   //Adding camera to the scene

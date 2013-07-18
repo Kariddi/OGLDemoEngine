@@ -6,7 +6,7 @@
 using namespace Uberngine;
 
 GLFWSystemFacilities::GLFWSystemFacilities() : OGLSystemFacilities(0),
-  window(NULL) { 
+  window(nullptr) { 
 
   glfwInit(); 
 }
@@ -14,7 +14,7 @@ GLFWSystemFacilities::GLFWSystemFacilities() : OGLSystemFacilities(0),
 bool GLFWSystemFacilities::CreateAndSetRenderContext(int *width, int *height, int c_bits, int d_bits, int s_bits, 
                                                      bool fullscreen) {
   int r_bits, g_bits, b_bits, a_bits;
-  GLFWmonitor *monitor = NULL;
+  GLFWmonitor *monitor = nullptr;
   if (fullscreen) {
     monitor = glfwGetPrimaryMonitor();
   } 
@@ -48,9 +48,9 @@ bool GLFWSystemFacilities::CreateAndSetRenderContext(int *width, int *height, in
   glfwWindowHint(GLFW_DEPTH_BITS, d_bits);
   glfwWindowHint(GLFW_STENCIL_BITS, s_bits);
 
-  window = glfwCreateWindow(*width, *height, "", monitor, NULL);
+  window = glfwCreateWindow(*width, *height, "", monitor, nullptr);
   glfwMakeContextCurrent(window);
-  return (window != NULL) ? true : false;
+  return (window != nullptr) ? true : false;
 }
 
 void GLFWSystemFacilities::GetMousePosition(int *x, int *y) {

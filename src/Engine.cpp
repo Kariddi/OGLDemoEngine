@@ -23,8 +23,9 @@ Engine::Engine(UIView *view) {
 */
 
 BaseEngine::~BaseEngine() {
-  for (SceneListIt I = Scenes.begin(), E = Scenes.end(); I != E; ++I)
+  for (SceneListIt I = Scenes.begin(), E = Scenes.end(); I != E; ++I) {
     delete *I;
+  }
 
   delete PhysMan;
 
@@ -39,9 +40,9 @@ GUI *BaseEngine::GetGUI() {
 
 //Initializes the Engine
 //Creates a new Scene
-Scene *BaseEngine::CreateNewScene() {
+Scene* BaseEngine::CreateNewScene() {
 
-  Scene *NewScene = new Scene(this);
+  Scene* NewScene = new Scene(PhysMan);
   Scenes.push_back(NewScene);
 
   return NewScene;
@@ -49,7 +50,7 @@ Scene *BaseEngine::CreateNewScene() {
 
 //Updates the currently loaded scene
 void BaseEngine::UpdateScene() {
-  Scenes[CurrScene]->UpdateScene();
+  Scenes[CurrScene]->UpdateScene(GetFrameTimeDelta());
 }
 
 //Renders the loaded scene

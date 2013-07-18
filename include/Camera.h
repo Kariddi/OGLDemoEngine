@@ -17,7 +17,7 @@ class Camera : public Node {
   glm::mat4 CamPVMatrix;
 public:
 typedef _CameraType CameraType;
-  Camera(BaseEngine *eng, Scene *parent);
+  Camera(Scene *parent);
   ~Camera();
   void SetPerspectiveCamera(float fov, float aspect, float near, float far);
   void LookAt(float eyex, float eyey, float eyez, 

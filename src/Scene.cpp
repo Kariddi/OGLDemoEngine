@@ -7,27 +7,32 @@
 
 using namespace Uberngine;
 
-Scene::Scene(BaseEngine *e) : Node(e, NULL), Cam(NULL) {
-  DynWorld = e->GetPhysicsManager()->GetNewDynamicsWorld();
+Scene::Scene(PhysicsManager* p_manager) 
+  : RootNode(new Node(this)), Cam(nullptr), PhysMan(p_manager) {
+
+  DynWorld = p_manager->GetNewDynamicsWorld();
+  //RootNode->SetDynamicsWorld(DynWorld);
 }
 
 Scene::~Scene() {
   //Delete lights
-  for (LightListIt I = Lights.begin(), E = Lights.end(); I != E; ++I) 
-    delete *I;
+  for (auto I : Lights) 
+    delete I;
 
-  //Delete camera
-//  if (Cam)
-//    delete Cam;
+  delete RootNode;
+
+  PhysMan->DisposeDynamicsWorld(DynWorld);
+  DynWorld = nullptr;
 }
 
 void Scene::RenderScene() {
-  Render(this);
+  RootNode->Render(this);
 }
 
-void Scene::UpdateScene() {
-  GlobalUpdate();
-  DynWorld->StepWorld(Eng.GetFrameTimeDelta(), 10);
+void Scene::UpdateScene(float frame_time_delta) {
+  //GlobalUpdate();
+  RootNode->GlobalUpdate();
+  DynWorld->StepWorld(frame_time_delta, 10);
 }
 
 void Scene::SetGravity(float x, float y, float z) { DynWorld->SetGravity(x,y,z); }

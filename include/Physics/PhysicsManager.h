@@ -24,7 +24,7 @@ class DynamicsWorld;
 class PhysicsManager {
   struct VectorComparator {
   public:
-    bool operator()(const btVector3 &a, const btVector3 &b) {
+    bool operator()(const btVector3 &a, const btVector3 &b) const {
       if (a.x() < b.x())
         return true;
       if (a.y() < b.y())

@@ -4,7 +4,7 @@
 
 using namespace Uberngine;
 
-Camera::Camera(BaseEngine *eng, Scene *parent) : Node(eng, parent) ,CT(PERSPECTIVE), CamViewMatrix(1.0f), 
+Camera::Camera(Scene *parent) : Node(parent->GetRootNode()) ,CT(PERSPECTIVE), CamViewMatrix(1.0f), 
                                              CamProjMatrix(1.0f) {}
 
 Camera::~Camera() {}

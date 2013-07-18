@@ -15,7 +15,6 @@
 namespace Uberngine {
 
 class Scene;
-class Node;
 class GUI;
 //class SystemFacilities;
 
@@ -23,13 +22,13 @@ class BaseEngine {
 typedef std::vector<Scene*> SceneList;
 typedef SceneList::iterator SceneListIt;
 
-  PhysicsManager *PhysMan;
-  GUI *Gui;
+  PhysicsManager* PhysMan;
+  GUI* Gui;
 protected:
   SceneList Scenes;
   int CurrScene;
   bool DepthTestEnabled;
-  OGLSystemFacilities *Sys;
+  OGLSystemFacilities* Sys;
   float FrameTime;
   float PreviousFrameTime;
   float FrameTimeDelta;
@@ -41,19 +40,19 @@ public:
   virtual ~BaseEngine();
   //Initializes the engine
 //  bool Init(const char *window_title, int width, int height, int c_bits, int d_bits, int s_bits, bool fullscreen);
-  GUI *GetGUI();
+  GUI* GetGUI();
   //Updates the scene
   void UpdateScene();
   //Renders the scene
   void RenderScene();
   //Creates a new Scene
-  Scene *CreateNewScene();
+  Scene* CreateNewScene();
   //Loads a scene
   void LoadScene(int i) { CurrScene = i; }
   //Checks if a key is pressed
   bool CheckPressedKey(int key) { return Sys->GetPressedKey(key); }
   //Retrieves the mouse position
-  void GetMousePosition(int *x, int *y) { Sys->GetMousePosition(x, y); }
+  void GetMousePosition(int* x, int* y) { Sys->GetMousePosition(x, y); }
   float GetFrameTime() { return FrameTime; }
   float GetPreviousFrameTime() { return PreviousFrameTime; }
   float GetFrameTimeDelta() { return FrameTimeDelta; }
@@ -61,7 +60,7 @@ public:
   int GetWidth() { return Width; }
   int GetHeight() { return Height; }
   short GetDepth() { return Depth; }
-  PhysicsManager *GetPhysicsManager() { return PhysMan; }
+  PhysicsManager* GetPhysicsManager() { return PhysMan; }
   void StepSingleFrame();
   //Implements the engine Main Loop
   void MainLoop();
@@ -72,4 +71,5 @@ template<PlatformType platform>
 class Engine : public BaseEngine { Engine<platform>() {} };
 
 }
+
 #endif

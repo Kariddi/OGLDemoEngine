@@ -2,6 +2,7 @@
 #define __LOADER_OBJMATERIALLOADER_H__
 #include <string>
 #include <vector>
+#include <iostream>
 #include <fstream>
 #include <map>
 #include <Mesh.h>

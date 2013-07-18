@@ -9,7 +9,8 @@ namespace Uberngine {
 class DynamicsWorld {
   btDynamicsWorld *World;
   friend class PhysicsManager;
-  DynamicsWorld() : World(NULL) {}
+  DynamicsWorld() : World(nullptr) {}
+  ~DynamicsWorld() { delete World; }
 public:
   void AddRigidBody(RigidBody *rb) { World->addRigidBody(rb->Body); }
   void RemoveRigidBody(RigidBody *rb) { World->removeRigidBody(rb->Body); }
@@ -19,7 +20,6 @@ public:
   void SetGravity(float x, float y, float z) {
     World->setGravity(btVector3(x, y, z));
   }
-  ~DynamicsWorld() { delete World; }
 };
 
 }
