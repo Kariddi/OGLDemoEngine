@@ -1,9 +1,9 @@
 #ifndef __UBERNGINE_ENGINE_H__
 #define __UBERNGINE_ENGINE_H__
 #include <vector>
-#include <unordered_map>
 #include <cstdint>
 #include <OGL.h>
+#include <EngineTraits.h>
 #include <Node.h>
 #include <Physics/PhysicsManager.h>
 #include <OGLSystemFacilities.h>
@@ -27,7 +27,6 @@ typedef SceneList::iterator SceneListIt;
 
 protected:
   PhysicsManager PhysMan;
-  GUI* Gui;
   SceneList Scenes;
   std::uint32_t CurrScene;
   bool DepthTestEnabled;
@@ -42,7 +41,6 @@ protected:
   // existance of this class anyway ...
   ~PureEngine();
 public:
-  GUI* GetGUI();
   //Creates a new Scene
   Scene* CreateNewScene();
   //Loads a scene
@@ -57,7 +55,6 @@ public:
   PhysicsManager* GetPhysicsManager() { return &PhysMan; }
   //Updates the scene
   void UpdateScene();
-  void RenderGUI() { Gui->RenderGUI(); }
 };
 
 template<typename Derived>
@@ -71,6 +68,7 @@ public:
   //Implements the engine Main Loop
   void MainLoop();
   //void AssociateShader(MeshId mid, Shader sh);
+  typename EngineTraits<Derived>::NodeTy* NewNode() { return nullptr; }
 };
 
 //Renders the loaded scene

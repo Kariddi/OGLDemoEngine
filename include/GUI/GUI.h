@@ -3,6 +3,7 @@
 #include <vector>
 #include <Texture.h>
 #include <Shader.h>
+#include <Defs.h>
 
 namespace Uberngine {
 class GUIElement;
@@ -35,7 +36,8 @@ typedef ElementVectorTy::iterator ElementVectorIt;
   FontInfo *FInfo;
   GUI();
   void RenderGUI();
-  friend class PureEngine;
+  template<PlatformType ty>
+  friend class Engine;
 public:
   ~GUI();
   const FontInfo *GetFontInfo() const { return FInfo; }

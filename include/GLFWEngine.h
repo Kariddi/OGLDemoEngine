@@ -9,6 +9,7 @@ namespace Uberngine {
 
 template<>
 class Engine<UBE_GLFW> : public BaseEngine<Engine<UBE_GLFW>> {
+  GUI* Gui;
   GLFWSystemFacilities Sys;
 public:
   Engine();
@@ -25,11 +26,17 @@ public:
   //Implements the engine Main loop
   void MainLoop();
 
+  GUI* GetGUI() {
+    if (Gui == nullptr)
+      Gui = new GUI;
+    return Gui;
+  }
+
+  void RenderGUI() { Gui->RenderGUI(); }
+
 };
 
-Engine<UBE_GLFW>::Engine() {
-  //this->Sys = static_cast<OGLSystemFacilities*>(SystemFacilitiesFactory<UBE_GLFW>::Create()); 
-}
+Engine<UBE_GLFW>::Engine() : Gui(nullptr) {}
 
 bool Engine<UBE_GLFW>::Init(const char *window_title, int width, int height, int c_bits, 
                       int d_bits, int s_bits, bool fullscreen) {

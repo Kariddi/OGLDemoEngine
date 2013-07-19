@@ -10,9 +10,10 @@ namespace Uberngine {
 template<>
 class Engine<UBE_IOS> : public BaseEngine {
   UIView *IosView;
+  GUI* Gui;
   EAGLSystemFacilities Sys;
 public:
-  Engine<UBE_IOS>(UIView *layer) : IosView(layer), Sys(IosView.layer) {}
+  Engine<UBE_IOS>(UIView *layer) : IosView(layer), Gui(nullptr), Sys(IosView.layer) {}
   bool Init(int width, int height, int c_bits, int d_bits, int s_bits) {
     bool ret_val = false;
     ret_val = this->Sys->CreateAndSetRenderContext(&width, &height, c_bits, d_bits, s_bits, false);
@@ -37,6 +38,14 @@ public:
 
   //Implements the engine Main loop
   void MainLoop();
+
+  GUI* GetGUI() {
+    if (Gui == nullptr)
+      Gui = new GUI;
+    return Gui;
+  }
+
+  void RenderGUI() { Gui->RenderGUI(); }
 };
 
 //Renders the loaded scene

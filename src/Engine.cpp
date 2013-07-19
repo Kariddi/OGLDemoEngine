@@ -6,7 +6,7 @@
 using namespace std;
 using namespace Uberngine;
 
-PureEngine::PureEngine() : Gui(NULL), CurrScene(0), DepthTestEnabled(false),
+PureEngine::PureEngine() : CurrScene(0), DepthTestEnabled(false),
                            FrameTime(0.0f),
                            PreviousFrameTime(0.0f), 
                            FrameTimeDelta(0.0f),
@@ -22,12 +22,6 @@ PureEngine::~PureEngine() {
   //delete PhysMan;
 
   //BaseSystemFacilitiesFactory::Destroy();
-}
-
-GUI* PureEngine::GetGUI() {
-  if (Gui == NULL)
-    Gui = new GUI;
-  return Gui;
 }
 
 //Initializes the Engine
