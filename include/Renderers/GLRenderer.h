@@ -32,7 +32,7 @@ public:
     GLIdxType(nullptr), GLNormType(GL_FLOAT), GLTexType(GL_FLOAT) {}
   
   void Render(const EngineReal* view_mat, const EngineReal* proj_mat, 
-  	const glm::mat4& comulative, const LightList& lights) {
+  	const glm::mat4& comulative, const LightList& lights) const {
 //  std::cout << "Rendering Node" << std::endl;
   //If the node doesn't have an associated mesh or the shader is invalid don't render
   if (NodeMesh && ShaderProg && ShaderProg->isValid()) {

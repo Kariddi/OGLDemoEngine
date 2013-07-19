@@ -14,55 +14,23 @@
 using namespace Uberngine;
 
 Node::Node() : Parent(nullptr), CurrentScene(nullptr), Body(nullptr),
-               GLTransform(1.0f) {
-  //Rend = RendererFactory<OpenGL>::BuildNewRenderer();
-}
-
-Node::Node(Node* parent) : Node()
-{
-  if (parent != nullptr) {
-    this->CurrentScene = parent->CurrentScene;
-    parent->AddChildNode(this); 
-  }
-}
-
-Node::Node(Scene* parent) : Node()
-{
-  if (parent != nullptr)
-    this->CurrentScene = parent; 
-}
+               GLTransform(1.0f) {}
 
 Node::~Node() {
-  for (NodeListIt I = Children.begin(), E = Children.end(); I != E; ++I)
-    delete *I;
 
   SetMesh(nullptr);
-  //if (DynWorld != nullptr)
   SetRigidBody(nullptr);
-  //delete Rend;
-}
-
-void Node::Render(Scene* scene) {
-
-  Camera* Cam = scene->GetCamera();
-
-  Rend.Render(Cam->GetViewMatrix(), Cam->GetProjMatrix(), 
-    Comulative,scene->GetLights());
-
-  //Render the sub-nodes
-  for (auto I : Children)
-    I->Render(scene);
 }
 
 void Node::GlobalInitialize() {
-  Initialize();
+  //Initialize();
   for (auto I : Children)
     I->GlobalInitialize();
 }
 
 void Node::GlobalUpdate() {
   //std::cout << "Global Updating Node" << std::endl;
-  Update();
+  //Update();
   if (Body != nullptr) {
     float trans[16];
     Body->GetPosition(trans);
@@ -99,16 +67,8 @@ void Node::SetShader(Shader* shader) {
 }
 
 void Node::SetRigidBody(RigidBody* rb) {
-  DynamicsWorld& DWorld = *CurrentScene->GetDynamicsWorld();
   if (Body != nullptr) {
-    DWorld.RemoveRigidBody(Body);
     delete Body;
-  }
-  if (rb != nullptr) {
-    rb->SetKinematic(true);
-    rb->SetPosition(GetTransform());
-    rb->SetKinematic(false);
-    DWorld.AddRigidBody(rb);
   }
   Body = rb;
 }

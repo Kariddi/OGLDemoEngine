@@ -1,8 +1,10 @@
 #ifndef __UBERNGINE_ENGINE_H__
 #define __UBERNGINE_ENGINE_H__
 #include <vector>
+#include <unordered_map>
 #include <cstdint>
 #include <OGL.h>
+#include <Node.h>
 #include <Physics/PhysicsManager.h>
 #include <OGLSystemFacilities.h>
 #include <GUI/GUI.h>
@@ -24,7 +26,7 @@ typedef std::vector<Scene*> SceneList;
 typedef SceneList::iterator SceneListIt;
 
 protected:
-  PhysicsManager* PhysMan;
+  PhysicsManager PhysMan;
   GUI* Gui;
   SceneList Scenes;
   std::uint32_t CurrScene;
@@ -52,7 +54,7 @@ public:
   std::uint16_t GetWidth() { return Width; }
   std::uint16_t GetHeight() { return Height; }
   std::uint8_t GetDepth() { return Depth; }
-  PhysicsManager* GetPhysicsManager() { return PhysMan; }
+  PhysicsManager* GetPhysicsManager() { return &PhysMan; }
   //Updates the scene
   void UpdateScene();
   void RenderGUI() { Gui->RenderGUI(); }

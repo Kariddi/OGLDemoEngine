@@ -35,11 +35,15 @@ int main(int argc, char **argv)
   //Creating a scene
   Scene *SC = Eng.CreateNewScene();
   //Creating nodes
-  Node *MyNode = new Node(SC->GetRootNode());
-  Node *MyNode2 = new Node(MyNode);
-  Node *MyNode3 = new Node(SC->GetRootNode());
+  Node *MyNode = new Node;
+  Node *MyNode2 = new Node;
+  Node *MyNode3 = new Node;
+ 
+  SC->AttachNodeToScene(*MyNode);
+  SC->AttachNodeToScene(*MyNode3);
+  SC->AttachNodeToParent(*MyNode2, *MyNode);
   //Creating the camera
-  Camera *Cam = new Camera(SC);
+  Camera *Cam = new Camera();
   //Set perspective parameters
   Cam->SetPerspectiveCamera(60.0f, (float)4/3, 0.1f, 1000.0f);
   //Adding camera to the scene
@@ -82,9 +86,9 @@ int main(int argc, char **argv)
   CollisionShape *CircleShape3 = PyMan->GetSphereShape(11);
   CollisionShape *BoxShape3 = PyMan->GetBoxShape(10,21,5);
   RigidBody *NewBody = new RigidBody(0.001f, CircleShape);
-  MyNode->SetRigidBody(NewBody);
+  SC->SetRigidBodyForNode(NewBody, MyNode);
   NewBody = new RigidBody(0.0f, BoxShape);
-  MyNode3->SetRigidBody(NewBody);
+  SC->SetRigidBodyForNode(NewBody, MyNode3);
   MyNode->SetKinematic(true);
   SC->SetGravity(0,-10,0);
 

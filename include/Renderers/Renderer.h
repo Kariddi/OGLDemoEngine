@@ -13,7 +13,7 @@ class Renderer {
 
 public:
   void Render(const EngineReal* view_mat, const EngineReal* proj_mat, 
-  	const glm::mat4& comulative, const LightList& lights) {
+  	const glm::mat4& comulative, const LightList& lights) const {
 
   	static_cast<Derived*>(this)->Render(view_mat, proj_mat, comulative, lights);
   }

@@ -88,8 +88,8 @@ struct Mesh {
   std::vector<Texture*> Textures;
   Mesh(void *verts, unsigned int vert_num, const AttributeInfo &ai, 
        const std::vector<Part*>& parts, 
-       const TextureList &tex) : Vertices(static_cast<char*>(verts)),
-                                 VerticesNum(vert_num), AttInfo(ai), Parts(parts), Textures(tex) {
+       const TextureList &tex) : AttInfo(ai), Vertices(static_cast<char*>(verts)),
+                                 VerticesNum(vert_num), Parts(parts), Textures(tex) {
     /*const unsigned char PadAmount[] = { 0, 3, 2, 1 };
     VertexStride = 3*LoaderElement<UBE_LOADER_FLOAT>::Size;
     if (has_tex)

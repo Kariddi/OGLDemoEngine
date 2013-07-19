@@ -565,8 +565,8 @@ void ObjLoader<Texture, Normal>::removeRedundantVertices(ParseIndexTy *indices) 
         IDX1 = Vertices[i1+norm_idx_off+1];
         IDX2 = Vertices[i2+norm_idx_off+1];
         if (HasNorm && equal && !(fabsf(NormalData->at(IDX1) - NormalData->at(IDX2)) < threshold &&
-            fabsf(NormalData->at(IDX1+1) - NormalData->at(IDX2+1) < threshold &&
-            fabsf(NormalData->at(IDX1+2) - NormalData->at(IDX2+2)) < threshold)))
+            fabsf(NormalData->at(IDX1+1) - NormalData->at(IDX2+1)) < threshold &&
+            fabsf(NormalData->at(IDX1+2) - NormalData->at(IDX2+2)) < threshold))
           equal = false;
         if (equal) {
           indices[*I2] = *I;

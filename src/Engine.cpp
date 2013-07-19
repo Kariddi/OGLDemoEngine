@@ -11,7 +11,7 @@ PureEngine::PureEngine() : Gui(NULL), CurrScene(0), DepthTestEnabled(false),
                            PreviousFrameTime(0.0f), 
                            FrameTimeDelta(0.0f),
                            Width(0), Height(0), Depth(0) {
-  PhysMan = new PhysicsManager;
+  //PhysMan = new PhysicsManager;
 }
 
 PureEngine::~PureEngine() {
@@ -19,7 +19,7 @@ PureEngine::~PureEngine() {
     delete I;
   }
 
-  delete PhysMan;
+  //delete PhysMan;
 
   //BaseSystemFacilitiesFactory::Destroy();
 }
@@ -34,7 +34,7 @@ GUI* PureEngine::GetGUI() {
 //Creates a new Scene
 Scene* PureEngine::CreateNewScene() {
 
-  Scene* NewScene = new Scene(PhysMan);
+  Scene* NewScene = new Scene(&PhysMan);
   Scenes.push_back(NewScene);
 
   return NewScene;
