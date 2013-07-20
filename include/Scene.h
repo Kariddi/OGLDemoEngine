@@ -4,28 +4,43 @@
 #include <Node.h>
 #include <Light.h>
 #include <Camera.h>
+#include <Physics/DynamicsWorld.h>
+#include <algorithm>
 
 namespace Uberngine {
 
+template<typename RendererType>
 class Camera;
 class PhysicsManager;
 class RigidBody;
 
-class Scene {
-
-  typedef std::vector<Node*> NodeList;
-  typedef NodeList::iterator NodeListIt;
-
-  LightList Lights;
-  Node::NodeList Nodes;
-  Node* RootNode;
-  Camera* Cam;
+class PureScene {
   PhysicsManager* PhysMan;
+
+protected:
+  LightList Lights;
   DynamicsWorld* DynWorld;
+  PureScene(PhysicsManager* p_manager);
+  ~PureScene();
+public:
+  void AddLight(Light* lht) { Lights.push_back(lht); }
+  //Gets the list of all the lights
+  const LightList& GetLights() const { return Lights; }
+  void SetGravity(float x, float y, float z);
+  void SetRigidBodyForNode(RigidBody* rb, PureNode* n);
+  DynamicsWorld* GetDynamicsWorld() { return DynWorld; }
+};
+
+template<typename RendererType>
+class Scene : public PureScene {
+  typename Node<RendererType>::NodeList Nodes;
+  Node<RendererType>* RootNode;
+  Camera<RendererType>* Cam;
 
   Scene(PhysicsManager* p_manager);
-  void DetachNode(const Node& child);
-  friend class PureEngine;
+  void DetachNode(const Node<RendererType>& child);
+  template<typename Derived>
+  friend class BaseEngine;
 public:
 
   ~Scene();
@@ -34,21 +49,82 @@ public:
   //Starts the update of the scene
   void UpdateScene(float frame_time_delta);
   //Sets the camera of the scene
-  void SetCamera(Camera* cam) { Cam = cam; RootNode->AddChildNode(cam); }
+  void SetCamera(Camera<RendererType>* cam) { Cam = cam; RootNode->AddChildNode(cam); }
   //Gets the camera of the scene
-  Camera* GetCamera() const { return Cam; }
+  Camera<RendererType>* GetCamera() const { return Cam; }
   //Adds a light to the scene
-  void AddLight(Light* lht) { Lights.push_back(lht); }
-  //Gets the list of all the lights
-  const LightList& GetLights() const { return Lights; }
-  void SetGravity(float x, float y, float z);
-  void SetRigidBodyForNode(RigidBody* rb, Node* n);
-  void AttachNodeToParent(Node& child, Node& parent);
-  void AttachNodeToScene(Node& child);
-  Node* GetRootNode() const { return RootNode; }
-  DynamicsWorld* GetDynamicsWorld() { return DynWorld; }
+  void AttachNodeToParent(Node<RendererType>& child, Node<RendererType>& parent);
+  void AttachNodeToScene(Node<RendererType>& child);
+  Node<RendererType>* CreateNewNode();
+  Node<RendererType>* GetRootNode() const { return RootNode; }
   //void AssociateShader(MeshId mid, Shader sh);
 };
+
+template<typename RendererType>
+Scene<RendererType>::Scene(PhysicsManager* p_manager) 
+  : PureScene(p_manager), RootNode(new Node<RendererType>), Cam(nullptr) {}
+
+template<typename RendererType>
+Scene<RendererType>::~Scene() {
+  for (auto I : Nodes) { 
+    delete I;
+  }
+  Nodes.clear();
+
+  delete RootNode;
+}
+
+template<typename RendererType>
+void Scene<RendererType>::RenderScene() {
+  for (auto Node : Nodes) {
+    Node->GetRenderer().Render(Cam->GetViewMatrix(), Cam->GetProjMatrix(), 
+      Node->GetComulative(), Lights);
+  }
+}
+
+template<typename RendererType>
+void Scene<RendererType>::UpdateScene(float frame_time_delta) {
+  //GlobalUpdate();
+  RootNode->GlobalUpdate();
+  DynWorld->StepWorld(frame_time_delta, 10);
+}
+
+
+template<typename RendererType>
+void Scene<RendererType>::AttachNodeToParent(Node<RendererType>& child, Node<RendererType>& parent) {
+  Scene* SC = child.GetScene();
+  if (SC == nullptr || SC != this) {
+    if (SC != nullptr)
+      SC->DetachNode(child);
+    child.SetScene(this);
+    Nodes.push_back(&child);
+  }
+  parent.AddChildNode(&child);
+  SetRigidBodyForNode(child.GetRigidBody(), &child);
+}
+
+template<typename RendererType>
+void Scene<RendererType>::DetachNode(const Node<RendererType>& child) {
+  typename Node<RendererType>::NodeListIt It = std::find(Nodes.begin(), Nodes.end(), &child);
+  assert(It != Nodes.end() && "Node not present during detach");
+  Nodes.erase(It);
+}
+
+template<typename RendererType>
+void Scene<RendererType>::AttachNodeToScene(Node<RendererType>& child) {
+  Scene* SC = child.GetScene();
+  if (SC != nullptr)
+    SC->DetachNode(child);
+  AttachNodeToParent(child, *RootNode);
+}
+
+template<typename RendererType>
+Node<RendererType>* Scene<RendererType>::CreateNewNode() {
+  Node<RendererType>* NewNode = new Node<RendererType>();
+  AttachNodeToScene(*NewNode);
+
+  return NewNode;
+}
 
 }
 #endif

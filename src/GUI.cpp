@@ -37,7 +37,7 @@ GUI::GUI() {
   glTexImage2D(GL_TEXTURE_2D, 0, FontTexture->format, FontTexture->width, FontTexture->height, 0,
                FontTexture->format, FontTexture->type, FontTexture->imageData);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  FInfo->FontShader = new Shader("./font.vert", "./font.frag");
+  FInfo->FontShader = new Shader<RendererTypes::OpenGL>("./font.vert", "./font.frag");
   glBindTexture(GL_TEXTURE_2D, 0);
 
   delete FontTexture;

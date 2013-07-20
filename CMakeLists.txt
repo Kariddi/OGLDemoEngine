@@ -10,8 +10,8 @@ FIND_PACKAGE(PNG REQUIRED)
 SET(EXTRA_LIBS ${EXTRA_LIBS} ${PNG_LIBRARIES})
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
 
-SET(COMMON_FILES src/Texture.cpp src/Engine.cpp src/PhysicsManager.cpp src/RigidBody.cpp src/CollisionShape.cpp src/Scene.cpp src/Shader.cpp src/Node.cpp src/GUI.cpp src/GUILabel.cpp src/Camera.cpp src/ObjMaterialLoader.cpp)
-SET(compile_flags "${compile_flags} -Wall -std=c++11")
+SET(COMMON_FILES src/Texture.cpp src/Engine.cpp src/PhysicsManager.cpp src/RigidBody.cpp src/CollisionShape.cpp src/Scene.cpp src/Node.cpp src/GUI.cpp src/GUILabel.cpp src/Camera.cpp src/ObjMaterialLoader.cpp)
+SET(compile_flags "${compile_flags} -std=c++11")
 
 if (APPLE AND (NOT IOS))
   FIND_LIBRARY(COCOA_LIBRARY Cocoa)

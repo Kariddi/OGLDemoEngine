@@ -11,6 +11,17 @@
 #endif
 
 enum PlatformType {UBE_GLFW, UBE_IOS};
+
+namespace Uberngine {
+
+namespace RendererTypes {
+
+struct OpenGL {};
+
+}
+
+}
+
 //Integer types
 #if defined(__APPLE__) || defined(linux) || defined(_WIN32)
 #include <cstdint>

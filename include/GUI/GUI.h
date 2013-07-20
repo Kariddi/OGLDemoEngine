@@ -6,11 +6,12 @@
 #include <Defs.h>
 
 namespace Uberngine {
+
 class GUIElement;
 
 struct FontInfo {
   GLuint TexObj;
-  Shader *FontShader;
+  Shader<RendererTypes::OpenGL> *FontShader;
   static const char XSize[128];
   static const char XAdvance[128];
   static const float XScale;

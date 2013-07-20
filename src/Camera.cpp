@@ -4,12 +4,12 @@
 
 using namespace Uberngine;
 
-Camera::Camera() : Node(), CT(PERSPECTIVE), CamViewMatrix(1.0f), 
-                                             CamProjMatrix(1.0f) {}
+PureCamera::PureCamera() : CT(PERSPECTIVE), CamViewMatrix(1.0f), 
+                                            CamProjMatrix(1.0f) {}
 
-Camera::~Camera() {}
+PureCamera::~PureCamera() {}
 
-void Camera::SetPerspectiveCamera(float fov, float aspect, float near, float far) {
+void PureCamera::SetPerspectiveCamera(float fov, float aspect, float near, float far) {
 
  CT = PERSPECTIVE;
 
@@ -19,7 +19,7 @@ void Camera::SetPerspectiveCamera(float fov, float aspect, float near, float far
 }
 
 
-void Camera::LookAt(float eyex, float eyey, float eyez, 
+void PureCamera::LookAt(float eyex, float eyey, float eyez, 
                     float centerx, float centery, float centerz, 
                     float upx, float upy, float upz) {
 

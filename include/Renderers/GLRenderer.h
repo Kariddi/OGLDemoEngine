@@ -6,11 +6,15 @@
 #include <glm/gtc/matrix_transform.hpp> //translate, rotate, scale,
 #include <glm/gtc/matrix_inverse.hpp>
 #include <Renderers/Renderer.h>
+#include <Defs.h>
 #include <OGL.h>
 
 namespace Uberngine {
 
 class GLRenderer : public Renderer<GLRenderer> {
+public:
+  typedef RendererTypes::OpenGL RenderType;
+private:
   struct PartRenderCtx {
     GLuint PartVAO;
     GLuint VBO;
@@ -21,7 +25,7 @@ class GLRenderer : public Renderer<GLRenderer> {
   GLuint VertVBO;
   GLuint* Textures;
   //GLuint Samplers[3];
-  Shader* ShaderProg;
+  Shader<RenderType>* ShaderProg;
   GLenum* GLIdxType;
   GLenum GLNormType;
   GLenum GLTexType;
@@ -120,9 +124,6 @@ public:
     glBindVertexArray(0);
   }
 
-  //Render the sub-nodes
-//  for (NodeListIt I = Children.begin(), E = Children.end(); I != E; ++I)
-//    (*I)->Render(scene);
   }
 
   void SetMesh(Mesh* mesh) {
@@ -246,7 +247,7 @@ public:
     NodeMesh = mesh;
   }
 
-  void SetShader(Shader* shader) {
+  void SetShader(Shader<RenderType>* shader) {
     if (ShaderProg)
       delete ShaderProg;
     ShaderProg = shader;

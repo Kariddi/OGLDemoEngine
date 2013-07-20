@@ -15,26 +15,10 @@ PureEngine::PureEngine() : CurrScene(0), DepthTestEnabled(false),
 }
 
 PureEngine::~PureEngine() {
-  for (auto I : Scenes) {
-    delete I;
-  }
-
   //delete PhysMan;
 
   //BaseSystemFacilitiesFactory::Destroy();
 }
 
 //Initializes the Engine
-//Creates a new Scene
-Scene* PureEngine::CreateNewScene() {
 
-  Scene* NewScene = new Scene(&PhysMan);
-  Scenes.push_back(NewScene);
-
-  return NewScene;
-}
-
-//Updates the currently loaded scene
-void PureEngine::UpdateScene() {
-  Scenes[CurrScene]->UpdateScene(GetFrameTimeDelta());
-}

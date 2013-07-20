@@ -9,14 +9,21 @@
 #include <iostream>
 #include <GUI/GUI.h>
 #include <GUI/GUILabel.h>
+#include <EngineTraits.h>
 #include <cstring>
 #include <cmath>
 
 using namespace Uberngine;
 
+typedef Engine<UBE_GLFW> EngineTy;
+typedef EngineTraits<EngineTy>::SceneTy SceneTy;
+typedef EngineTraits<EngineTy>::NodeTy NodeTy;
+typedef EngineTraits<EngineTy>::CameraTy CameraTy;
+typedef EngineTraits<EngineTy>::ShaderTy ShaderTy;
+
 int main(int argc, char **argv)
 {
-  Engine<UBE_GLFW> Eng;
+  EngineTy Eng;
   
   //Initializing engine
   Eng.Init("Baluba", 640,480, 24, 16, 0, false);
@@ -33,17 +40,15 @@ int main(int argc, char **argv)
   mesh = load.loadMesh("Torus.obj", false);
   
   //Creating a scene
-  Scene *SC = Eng.CreateNewScene();
+  SceneTy *SC = Eng.CreateNewScene();
   //Creating nodes
-  Node *MyNode = new Node;
-  Node *MyNode2 = new Node;
-  Node *MyNode3 = new Node;
+  NodeTy *MyNode = SC->CreateNewNode();
+  NodeTy *MyNode2 = SC->CreateNewNode();
+  NodeTy *MyNode3 = SC->CreateNewNode();
  
-  SC->AttachNodeToScene(*MyNode);
-  SC->AttachNodeToScene(*MyNode3);
   SC->AttachNodeToParent(*MyNode2, *MyNode);
   //Creating the camera
-  Camera *Cam = new Camera();
+  CameraTy *Cam = new CameraTy();
   //Set perspective parameters
   Cam->SetPerspectiveCamera(60.0f, (float)4/3, 0.1f, 1000.0f);
   //Adding camera to the scene
@@ -65,8 +70,8 @@ int main(int argc, char **argv)
   //Load the scene
   Eng.LoadScene(0);
   //Creating and adding shaders to the nodes
-  Shader *shad = new Shader("./test.vert", "./no_tex_test.frag");
-  Shader *shad2 = new Shader("./test.vert", "./test.frag");
+  ShaderTy *shad = new ShaderTy("./test.vert", "./no_tex_test.frag");
+  ShaderTy *shad2 = new ShaderTy("./test.vert", "./test.frag");
   MyNode->SetShader(shad);
   MyNode2->SetShader(shad2);
   //Setting node and camera transformations

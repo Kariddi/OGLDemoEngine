@@ -17,17 +17,14 @@
 
 namespace Uberngine {
 
+template<typename RendererType>
 class Scene;
 class GUI;
 
 class PureEngine {
 
-typedef std::vector<Scene*> SceneList;
-typedef SceneList::iterator SceneListIt;
-
 protected:
   PhysicsManager PhysMan;
-  SceneList Scenes;
   std::uint32_t CurrScene;
   bool DepthTestEnabled;
   float FrameTime;
@@ -42,7 +39,6 @@ protected:
   ~PureEngine();
 public:
   //Creates a new Scene
-  Scene* CreateNewScene();
   //Loads a scene
   void LoadScene(std::uint32_t i) { CurrScene = i; }
   float GetFrameTime() { return FrameTime; }
@@ -54,22 +50,46 @@ public:
   std::uint8_t GetDepth() { return Depth; }
   PhysicsManager* GetPhysicsManager() { return &PhysMan; }
   //Updates the scene
-  void UpdateScene();
+  //void UpdateScene();
 };
 
 template<typename Derived>
 class BaseEngine : public PureEngine {
+  typedef typename EngineTraits<Derived>::RendererType RendererType;
+  typedef std::vector<Scene<RendererType>*> SceneList;
+  typedef typename SceneList::iterator SceneListIt;
+
+protected:
+  SceneList Scenes;
+  ~BaseEngine() {
+    for (auto I : Scenes) {
+      delete I;
+    }
+  }
 public:
-  //Initializes the engine
-//  bool Init(const char *window_title, int width, int height, int c_bits, int d_bits, int s_bits, bool fullscreen);
+  typedef typename EngineTraits<Derived>::NodeTy NodeTy;
+
+  Scene<RendererType>* CreateNewScene();
   //Renders the scene
   void RenderScene();
   void StepSingleFrame();
   //Implements the engine Main Loop
   void MainLoop();
-  //void AssociateShader(MeshId mid, Shader sh);
-  typename EngineTraits<Derived>::NodeTy* NewNode() { return nullptr; }
+//Updates the currently loaded scene
+  void UpdateScene();
+
 };
+
+//Creates a new Scene
+template<typename Derived>
+Scene<typename BaseEngine<Derived>::RendererType>* BaseEngine<Derived>::CreateNewScene() {
+
+  Scene<typename BaseEngine<Derived>::RendererType>* NewScene = 
+    new Scene<typename BaseEngine<Derived>::RendererType>(&PhysMan);
+  Scenes.push_back(NewScene);
+
+  return NewScene;
+}
 
 //Renders the loaded scene
 template<typename Derived>
@@ -86,6 +106,11 @@ void BaseEngine<Derived>::StepSingleFrame() {
 template<typename Derived>
 void BaseEngine<Derived>::MainLoop() {
   static_cast<Derived*>(this)->MainLoop();
+}
+
+template<typename Derived>
+void BaseEngine<Derived>::UpdateScene() {
+  Scenes[CurrScene]->UpdateScene(GetFrameTimeDelta());
 }
 
 template<PlatformType platform>

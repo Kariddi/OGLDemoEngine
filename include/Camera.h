@@ -7,26 +7,32 @@
 */
 namespace Uberngine {
 
+template<typename RendererType>
 class Scene;
 
-class Camera : public Node {
+class PureCamera {
   enum _CameraType { ORTOGRAPHIC, PERSPECTIVE };
   _CameraType CT;
   glm::mat4 CamViewMatrix;
   glm::mat4 CamProjMatrix;
   glm::mat4 CamPVMatrix;
 public:
-typedef _CameraType CameraType;
-  Camera();
-  ~Camera();
+  typedef _CameraType CameraType;
+
+  PureCamera();
+  ~PureCamera();
   void SetPerspectiveCamera(float fov, float aspect, float near, float far);
   void LookAt(float eyex, float eyey, float eyez, 
               float centerx, float centery, float centerz, 
               float upx, float upy, float upz);
-  const float *GetViewMatrix() const { return glm::value_ptr(CamViewMatrix); }
-  const float *GetProjMatrix() const { return glm::value_ptr(CamProjMatrix); }
-  const float *GetPVMatrix() const { return glm::value_ptr(CamPVMatrix); }
+  const float* GetViewMatrix() const { return glm::value_ptr(CamViewMatrix); }
+  const float* GetProjMatrix() const { return glm::value_ptr(CamProjMatrix); }
+  const float* GetPVMatrix() const { return glm::value_ptr(CamPVMatrix); }
+
 };
+
+template<typename RendererType>
+class Camera : public Node<RendererType>, public PureCamera {};
 
 }
 

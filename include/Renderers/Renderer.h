@@ -20,10 +20,10 @@ public:
   void SetMesh(Mesh* mesh) {
   	static_cast<Derived*>(this)->SetMesh(mesh);
   }
-  // TODO: This should be changed to Effect, a less render specific class
-  void SetShader(Shader* shader) {
+/*  // TODO: This should be changed to Effect, a less render specific class
+  void SetShader(Shader<typename Derived::RenderType>* shader) {
     static_cast<Derived*>(this)->SetShader(shader);
-  }
+  }*/
 //  void SetEffect(Effect* effect) {
 //    static_cast<Derived*>(this)->SetEffect(effect);
 //  }

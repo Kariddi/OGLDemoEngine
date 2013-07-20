@@ -3,16 +3,15 @@
 
 #include <cstdint>
 #include <Renderers/GLRenderer.h>
+#include <Defs.h>
 
 namespace Uberngine {
-
-struct OpenGL {};
 
 template<typename RenderType>
 struct RendererTraits {};
 
 template<>
-struct RendererTraits<OpenGL> {
+struct RendererTraits<RendererTypes::OpenGL> {
 
   typedef GLRenderer RendererType;
 
