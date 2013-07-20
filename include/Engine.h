@@ -33,10 +33,14 @@ protected:
   std::uint16_t Width;
   std::uint16_t Height;
   std::uint8_t Depth;
-  PureEngine();
+  PureEngine() : CurrScene(0), DepthTestEnabled(false),
+                           FrameTime(0.0f),
+                           PreviousFrameTime(0.0f), 
+                           FrameTimeDelta(0.0f),
+                           Width(0), Height(0), Depth(0)  {}
   // Not declared virtual becase no one should know about the
   // existance of this class anyway ...
-  ~PureEngine();
+  ~PureEngine() {}
 public:
   //Creates a new Scene
   //Loads a scene
