@@ -21,6 +21,39 @@ typedef EngineTraits<EngineTy>::NodeTy NodeTy;
 typedef EngineTraits<EngineTy>::CameraTy CameraTy;
 typedef EngineTraits<EngineTy>::ShaderTy ShaderTy;
 
+// Using Callback example
+
+/*
+struct KeyCallback {
+  static bool shift_press;
+  static bool terminate;
+  static float zm;
+  static float time_diff;
+  static NodeTy* MyNode;
+
+  static void KeyCallbackFun(GLFWwindow* w, int key, int scancode, int action, int mods) {
+    if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+      if (key == GLFW_KEY_UP)
+        zm += 1.0f*time_diff;
+      if (key == GLFW_KEY_DOWN)
+        zm += -1.0f*time_diff;
+      if (key == GLFW_KEY_ESCAPE)
+        terminate = true;
+      if (key == GLFW_KEY_LEFT_SHIFT) {
+        shift_press = !shift_press;
+        MyNode->SetKinematic(!MyNode->IsKinematic());
+      }
+    }
+  }
+};
+
+bool KeyCallback::shift_press = false;
+bool KeyCallback::terminate = false;
+float KeyCallback::zm = 0.0f;
+float KeyCallback::time_diff = 0.0f;
+NodeTy* KeyCallback::MyNode = nullptr;
+*/
+
 int main(int argc, char **argv)
 {
   EngineTy Eng;
@@ -103,7 +136,20 @@ int main(int argc, char **argv)
   std::cout << "Box Shape = " << BoxShape2 << std::endl;
   std::cout << "Sphere Shape = " << CircleShape3 << std::endl;
   std::cout << "Box Shape = " << BoxShape3 << std::endl;
+
   bool shift_press = false;
+  
+
+// Using Callback example
+
+/* 
+  KeyCallback::shift_press = false;
+  KeyCallback::terminate = false;
+  KeyCallback::MyNode = MyNode;
+  KeyCallback::zm = zm;
+  KeyCallback::time_diff = 0.0f;
+  Eng.SetPressedKeyCallback(KeyCallback::KeyCallbackFun);
+*/
 
   while(1) {
     int x, y;
@@ -113,9 +159,9 @@ int main(int argc, char **argv)
     zm += (Eng.CheckPressedKey(GLFW_KEY_UP) ? 1.0f : 0.0f)*time_diff;
     zm += (Eng.CheckPressedKey(GLFW_KEY_DOWN) ? -1.0f : 0.0f)*time_diff;
 //    std::cout << time_diff << std::endl;
-    if (Eng.CheckPressedKey(GLFW_KEY_ESC))
+    if (Eng.CheckPressedKey(GLFW_KEY_ESCAPE))
       break;
-    bool pressed = Eng.CheckPressedKey(GLFW_KEY_LSHIFT);
+    bool pressed = Eng.CheckPressedKey(GLFW_KEY_LEFT_SHIFT);
     if (!shift_press && pressed)
       shift_press = true;
     else if (shift_press && !pressed) {
@@ -125,7 +171,6 @@ int main(int argc, char **argv)
     x = x -320;
     y = y - 240;
     float fx = x / 320.0f, fy = y / 240.0f;
-   
     MyNode->SetTransform(0.0f,0.0f,zm, (fx*fx + fy*fy)*PI, fy,-fx,1.0f);
     Eng.StepSingleFrame();
     

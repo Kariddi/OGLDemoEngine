@@ -1,6 +1,7 @@
 #ifndef __UBERNGINE_ENGINE_UBE_GLFW_H__
 #define __UBERNGINE_ENGINE_UBE_GLFW_H__
-#include <GL/internal.h>
+//#include <GL/internal.h>
+#include <GLFW/glfw3.h>
 #include <GLFWSystemFacilities.h>
 #include <Engine.h>
 #include <Scene.h>
@@ -12,9 +13,11 @@ class Engine<UBE_GLFW> : public BaseEngine<Engine<UBE_GLFW>> {
   GUI* Gui;
   GLFWSystemFacilities Sys;
 public:
+  typedef GLFWSystemFacilities::KeyCallbackTy KeyCallbackTy;
   Engine();
   bool Init(const char *window_title, int width, int height, int c_bits, 
                       int d_bits, int s_bits, bool fullscreen);
+  void SetPressedKeyCallback(KeyCallbackTy kc);
   bool CheckPressedKey(int key) { return Sys.GetPressedKey(key); }
   //Retrieves the mouse position
   void GetMousePosition(int* x, int* y) { Sys.GetMousePosition(x, y); }
@@ -57,6 +60,10 @@ bool Engine<UBE_GLFW>::Init(const char *window_title, int width, int height, int
   }
   return ret_val;  
 
+}
+
+void Engine<UBE_GLFW>::SetPressedKeyCallback(KeyCallbackTy kc) {
+  this->Sys.SetPressedKeyCallback(kc);
 }
 
 //Renders the loaded scene

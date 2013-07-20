@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <iostream>
-#include <GLFWSystemFacilities.h>
 #include <GLFW/glfw3.h>
+#include <GLFWSystemFacilities.h>
 
 using namespace Uberngine;
 
@@ -58,6 +58,11 @@ void GLFWSystemFacilities::GetMousePosition(int *x, int *y) {
   glfwGetCursorPos(window, &d_x, &d_y);
   *x = static_cast<int>(d_x);
   *y = static_cast<int>(d_y);
+}
+
+void GLFWSystemFacilities::SetPressedKeyCallback(KeyCallbackTy kc) {
+  //typedef void(*KeyCallbackPtr)(GLFWwindow*, int, int, int, int);
+  glfwSetKeyCallback(window, kc);
 }
 
 bool GLFWSystemFacilities::GetPressedKey(int key) {
