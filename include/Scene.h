@@ -4,6 +4,7 @@
 #include <Node.h>
 #include <Light.h>
 #include <Camera.h>
+#include <Renderers/RenderPass.h>
 #include <Physics/DynamicsWorld.h>
 #include <algorithm>
 
@@ -33,9 +34,13 @@ public:
 
 template<typename RendererType>
 class Scene : public PureScene {
+public:
+  typedef RenderPass<RendererType> RenderPassTy;
+private:
   typename Node<RendererType>::NodeList Nodes;
   Node<RendererType>* RootNode;
   Camera<RendererType>* Cam;
+  RenderPass<RendererType>* RendPass;
 
   Scene(PhysicsManager* p_manager);
   void DetachNode(const Node<RendererType>& child);

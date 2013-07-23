@@ -58,7 +58,7 @@ public:
   typedef typename NodeList::iterator NodeListIt;
 
 private:
-  typedef typename RendererTraits<RendererType>::RendererType NodeRendererTy;
+  typedef typename RendererTraits<RendererType>::RendererObjType NodeRendererTy;
 
   Node<RendererType>* Parent;
   Scene<RendererType>* CurrentScene;

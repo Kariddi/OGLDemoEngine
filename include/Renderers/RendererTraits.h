@@ -13,7 +13,7 @@ struct RendererTraits {};
 template<>
 struct RendererTraits<RendererTypes::OpenGL> {
 
-  typedef GLRenderer RendererType;
+  typedef GLRenderer RendererObjType;
 
 };
 
