@@ -39,91 +39,91 @@ public:
   	const glm::mat4& comulative, const LightList& lights) const {
 //  std::cout << "Rendering Node" << std::endl;
   //If the node doesn't have an associated mesh or the shader is invalid don't render
-  if (NodeMesh && ShaderProg && ShaderProg->isValid()) {
-    GLuint Program = ShaderProg->getProgram();
-    //Setting the shader program
-    glUseProgram(ShaderProg->getProgram());
-    //Setting the View transform matrix
-    GLuint Loc = glGetUniformLocation(Program, "V");
-    glUniformMatrix4fv(Loc, 1, GL_FALSE, view_mat);
-   //Setting the Projection matrix
-    Loc = glGetUniformLocation(Program, "P");
+    if (NodeMesh && ShaderProg && ShaderProg->isValid()) {
+      GLuint Program = ShaderProg->getProgram();
+      //Setting the shader program
+      glUseProgram(ShaderProg->getProgram());
+      //Setting the View transform matrix
+      GLuint Loc = glGetUniformLocation(Program, "V");
+      glUniformMatrix4fv(Loc, 1, GL_FALSE, view_mat);
+     //Setting the Projection matrix
+      Loc = glGetUniformLocation(Program, "P");
+      
+      glUniformMatrix4fv(Loc, 1, GL_FALSE, proj_mat);
+      //Setting the Model matrix
+      Loc = glGetUniformLocation(Program, "M");
+      glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(comulative));
+      //Setting the Inverse transform matrix for normal transformation
+      Loc = glGetUniformLocation(Program, "MVN");
+      glm::mat4 View = glm::make_mat4(view_mat);
+      glm::mat4 InvTView = View*comulative;
+      InvTView = glm::inverseTranspose(InvTView);
+      glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(InvTView));
     
-    glUniformMatrix4fv(Loc, 1, GL_FALSE, proj_mat);
-    //Setting the Model matrix
-    Loc = glGetUniformLocation(Program, "M");
-    glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(comulative));
-    //Setting the Inverse transform matrix for normal transformation
-    Loc = glGetUniformLocation(Program, "MVN");
-    glm::mat4 View = glm::make_mat4(view_mat);
-    glm::mat4 InvTView = View*comulative;
-    InvTView = glm::inverseTranspose(InvTView);
-    glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(InvTView));
-
-    const LightList &LL = lights; 
-    int light_num = LL.size();
-    Loc = glGetUniformLocation(Program, "LightNum");
-    glUniform1i(Loc, light_num);
-    //Setting the lights parameters
-    for (int i = 0; i < light_num; ++i) {
-      std::stringstream ss;
-      ss << "L[" << i << "]";
-      Loc = glGetUniformLocation(Program, (ss.str() + ".position").c_str());
-      glm::vec4 Pos = glm::make_vec4(LL[i]->GetPosition());
-      glUniform3fv(Loc, 1, glm::value_ptr(Pos*View));
-      Loc = glGetUniformLocation(Program, (ss.str() + ".dir").c_str());
-      glm::vec4 Dir = glm::make_vec4(LL[i]->GetDirection());
-      glUniform3fv(Loc, 1, glm::value_ptr(Dir*View));
-      Loc = glGetUniformLocation(Program, (ss.str() + ".color").c_str());
-      glUniform3fv(Loc, 1, LL[i]->GetColor());
-      Loc = glGetUniformLocation(Program, (ss.str() + ".type").c_str());
-      glUniform1i(Loc, static_cast<GLint>(LL[i]->GetLightType()));
-    }
-    //Set if lighting is being used
-    Loc = glGetUniformLocation(Program, "is_lighted");
-    if (light_num > 0)
-      glUniform1i(Loc, 1);
-    else
-      glUniform1i(Loc, 0);
-
-    int i = 0;
-    //For each part of the mesh
-    //for (Mesh::PartListIt I = NodeMesh->Parts.begin(), E = NodeMesh->Parts.end(); I != E; ++I) {
-    for (auto I : NodeMesh->Parts) {
-      //Set the material data
-      //GLuint VAO = RenderCTXs[i].PartVAO;
-      //int Ind = (*I)->IndicesSize;
-      Loc = glGetUniformLocation(Program, "Mat.ambient");
-      glUniform3f(Loc, I->Mat.KAr, I->Mat.KAg, I->Mat.KAb);
-      Loc = glGetUniformLocation(Program, "Mat.diffuse");
-      glUniform3f(Loc, I->Mat.KDr, I->Mat.KDg, I->Mat.KDb);
-      Loc = glGetUniformLocation(Program, "Mat.specular");
-      glUniform3f(Loc, I->Mat.KSr, I->Mat.KSg, I->Mat.KSb);
-      Loc = glGetUniformLocation(Program, "Mat.spec_c");
-      glUniform1f(Loc, I->Mat.Ns);
-/*      //Bind samplers
-      for (int i = 0; i < 3; ++i)
-        glBindSampler(i, Samplers[i]);
-*/
-      //Set textures
-      int tex_num = I->Mat.TextureIdx.size();
-      for (int i2 = 0; i2 < tex_num; ++i2) {
+      const LightList &LL = lights; 
+      int light_num = LL.size();
+      Loc = glGetUniformLocation(Program, "LightNum");
+      glUniform1i(Loc, light_num);
+      //Setting the lights parameters
+      for (int i = 0; i < light_num; ++i) {
         std::stringstream ss;
-        ss << "Textures[" << i2 << "]";
-        Loc = glGetUniformLocation(Program, ss.str().c_str());
-        glUniform1i(Loc, i2);
-        glActiveTexture(GL_TEXTURE0 + i2);
-        glBindTexture(GL_TEXTURE_2D, Textures[I->Mat.TextureIdx[i2]]);
+        ss << "L[" << i << "]";
+        Loc = glGetUniformLocation(Program, (ss.str() + ".position").c_str());
+        glm::vec4 Pos = glm::make_vec4(LL[i]->GetPosition());
+        glUniform3fv(Loc, 1, glm::value_ptr(Pos*View));
+        Loc = glGetUniformLocation(Program, (ss.str() + ".dir").c_str());
+        glm::vec4 Dir = glm::make_vec4(LL[i]->GetDirection());
+        glUniform3fv(Loc, 1, glm::value_ptr(Dir*View));
+        Loc = glGetUniformLocation(Program, (ss.str() + ".color").c_str());
+        glUniform3fv(Loc, 1, LL[i]->GetColor());
+        Loc = glGetUniformLocation(Program, (ss.str() + ".type").c_str());
+        glUniform1i(Loc, static_cast<GLint>(LL[i]->GetLightType()));
       }
-
-      //Bind the vertex array and draw
-      glBindVertexArray(RenderCTXs[i].PartVAO);
-      glDrawElements(GL_TRIANGLES, I->IndicesSize, GLIdxType[i], (void*) 0);
-      ++i;
+      //Set if lighting is being used
+      Loc = glGetUniformLocation(Program, "is_lighted");
+      if (light_num > 0)
+        glUniform1i(Loc, 1);
+      else
+        glUniform1i(Loc, 0);
+    
+      int i = 0;
+      //For each part of the mesh
+      //for (Mesh::PartListIt I = NodeMesh->Parts.begin(), E = NodeMesh->Parts.end(); I != E; ++I) {
+      for (auto I : NodeMesh->Parts) {
+        //Set the material data
+        //GLuint VAO = RenderCTXs[i].PartVAO;
+        //int Ind = (*I)->IndicesSize;
+        Loc = glGetUniformLocation(Program, "Mat.ambient");
+        glUniform3f(Loc, I->Mat.KAr, I->Mat.KAg, I->Mat.KAb);
+        Loc = glGetUniformLocation(Program, "Mat.diffuse");
+        glUniform3f(Loc, I->Mat.KDr, I->Mat.KDg, I->Mat.KDb);
+        Loc = glGetUniformLocation(Program, "Mat.specular");
+        glUniform3f(Loc, I->Mat.KSr, I->Mat.KSg, I->Mat.KSb);
+        Loc = glGetUniformLocation(Program, "Mat.spec_c");
+        glUniform1f(Loc, I->Mat.Ns);
+          //Bind samplers
+        //for (int i = 0; i < 3; ++i)
+        //  glBindSampler(i, Samplers[i]);
+    
+        //Set textures
+        int tex_num = I->Mat.TextureIdx.size();
+        for (int i2 = 0; i2 < tex_num; ++i2) {
+          std::stringstream ss;
+          ss << "Textures[" << i2 << "]";
+          Loc = glGetUniformLocation(Program, ss.str().c_str());
+          glUniform1i(Loc, i2);
+          glActiveTexture(GL_TEXTURE0 + i2);
+          glBindTexture(GL_TEXTURE_2D, Textures[I->Mat.TextureIdx[i2]]);
+        }
+    
+        //Bind the vertex array and draw
+        glBindVertexArray(RenderCTXs[i].PartVAO);
+        glDrawElements(GL_TRIANGLES, I->IndicesSize, GLIdxType[i], (void*) 0);
+        ++i;
+      }
+      glBindVertexArray(0);
     }
-    glBindVertexArray(0);
-  }
-
+    
   }
 
   void SetMesh(Mesh* mesh) {
