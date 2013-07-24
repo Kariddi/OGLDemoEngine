@@ -16,10 +16,11 @@
 using namespace Uberngine;
 
 typedef Engine<UBE_GLFW> EngineTy;
-typedef EngineTraits<EngineTy>::SceneTy SceneTy;
-typedef EngineTraits<EngineTy>::NodeTy NodeTy;
-typedef EngineTraits<EngineTy>::CameraTy CameraTy;
-typedef EngineTraits<EngineTy>::ShaderTy ShaderTy;
+typedef EngineTraits<EngineTy>::RendererType RendererType;
+typedef Scene<RendererType> SceneTy;
+typedef Node<RendererType> NodeTy;
+typedef Camera<RendererType> CameraTy;
+typedef Shader<RendererType> ShaderTy;
 
 // Using Callback example
 

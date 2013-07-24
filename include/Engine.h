@@ -70,8 +70,9 @@ protected:
       delete I;
     }
   }
+
 public:
-  typedef typename EngineTraits<Derived>::NodeTy NodeTy;
+  typedef Node<RendererType> NodeTy;
 
   Scene<RendererType>* CreateNewScene();
   //Renders the scene

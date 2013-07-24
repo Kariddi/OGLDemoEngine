@@ -9,6 +9,7 @@ namespace Uberngine {
 
 template<PlatformType pt>
 class Engine;
+/*
 template<typename RendererType>
 class Node;
 template<typename RendererType>
@@ -17,6 +18,7 @@ template<typename RendererType>
 class Camera;
 template<typename RendererType>
 class Shader;
+*/
 
 template<typename EngineType>
 struct EngineTraits {};
@@ -24,20 +26,23 @@ struct EngineTraits {};
 template<>
 struct EngineTraits<Engine<UBE_GLFW>> {
   typedef RendererTypes::OpenGL RendererType;
+/*
   typedef Node<RendererType> NodeTy;
   typedef Scene<RendererType> SceneTy;
   typedef Camera<RendererType> CameraTy;
   typedef Shader<RendererType> ShaderTy;
-
+*/
 };
 
 template<>
 struct EngineTraits<Engine<UBE_IOS>> {
   typedef RendererTypes::OpenGL RendererType;
+/*
   typedef Node<RendererType> NodeTy;
   typedef Scene<RendererType> SceneTy;
   typedef Camera<RendererType> CameraTy;
   typedef Shader<RendererType> ShaderTy;
+*/
 
 };
 

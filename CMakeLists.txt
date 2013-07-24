@@ -11,6 +11,9 @@ SET(EXTRA_LIBS ${EXTRA_LIBS} ${PNG_LIBRARIES})
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
 
 SET(COMMON_FILES src/Texture.cpp src/Shader.cpp src/PhysicsManager.cpp src/RigidBody.cpp src/CollisionShape.cpp src/Scene.cpp src/Node.cpp src/GUI.cpp src/GUILabel.cpp src/Camera.cpp src/ObjMaterialLoader.cpp)
+SET(OPENGL_FILES src/GLRenderingSurface.cpp)
+SET(GLFW_FILES src/GLFWSystemFacilities.cpp src/GLFWEngine.cpp)
+SET(IOS_FILES src/EAGLSystemFacilities.mm src/IOSEngine.cpp)
 SET(compile_flags "${compile_flags} -std=c++11")
 
 if (APPLE AND (NOT IOS))
@@ -44,15 +47,15 @@ SET_TARGET_PROPERTIES(opengl32 PROPERTIES
 endif (WIN32)
 
 if (UNIX AND (NOT APPLE)) 
-ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp src/GLFWEngine.cpp ${COMMON_FILES}  main.cpp)
+ADD_EXECUTABLE(Demo src/glew.c ${OPENGL_FILES} ${GLFW_FILES} ${COMMON_FILES}  main.cpp)
 endif (UNIX AND (NOT APPLE))
 
 if (WIN32) 
-ADD_EXECUTABLE(Demo src/glew.c src/GLFWSystemFacilities.cpp stc/GLFWEngine.cpp ${COMMON_FILES} main_win32.cpp ${INCS})
+ADD_EXECUTABLE(Demo src/glew.c ${OPENGL_FILES} ${GLFW_FILES} ${COMMON_FILES} main_win32.cpp ${INCS})
 endif (WIN32)
 
 if (APPLE AND (NOT IOS))
-ADD_EXECUTABLE(Demo src/GLFWSystemFacilities.cpp src/GLFWEngine.cpp ${COMMON_FILES} main.cpp ${INCS})
+ADD_EXECUTABLE(Demo ${OPENGL_FILES} ${GLFW_FILES} ${COMMON_FILES} main.cpp ${INCS})
 if (CMAKE_BUILD_TYPE MATCHES "Profile")
   #SET_TARGET_PROPERTIES(Demo PROPERTIES COMPILE_FLAGS "-pg" ${COMPILE_FLAGS})
   #SET(link_flags "${link_flags} -lprofiler")
@@ -66,7 +69,7 @@ SET(link_flags "${link_flags} -lc++")
 endif (APPLE AND (NOT IOS))
 
 if (APPLE AND IOS)
-ADD_LIBRARY(Uberngine STATIC src/EAGLSystemFacilities.mm src/IOSEngine.cpp ${COMMON_FILES} ${INCS}) 
+ADD_LIBRARY(Uberngine STATIC ${IOS_FILES} ${COMMON_FILES} ${INCS}) 
 SET(compile_flags "${compile_flags} -stdlib=libc++")
 SET(link_flags "${link_flags} -lc++")
 SET_TARGET_PROPERTIES(Uberngine PROPERTIES COMPILE_FLAGS "-x objective-c++ -fobjc-arc")
