@@ -23,7 +23,7 @@ class ObjMaterialLoader {
   std::vector<std::string> Errors;
   NameToMaterialMap MaterialMap;
   Uberngine::Material *CurrentMaterial;
-  Uberngine::Mesh::TextureList *TexList;
+  Uberngine::Mesh::TextureDataList *TexList;
   //string CurrMatName;
   std::ifstream MaterialFile;
   std::string TokString;
@@ -41,7 +41,7 @@ public:
 
   ObjMaterialLoader(const std::string &dir_path) : DirectoryPath(dir_path) {}
   //Parses a material file and adds each material found to its own map
-  bool loadMaterialFile(const std::string &filename, Uberngine::Mesh::TextureList *tlist, bool record_errors);
+  bool loadMaterialFile(const std::string &filename, Uberngine::Mesh::TextureDataList *tlist, bool record_errors);
   //Retrieves a material from its name
   Uberngine::Material* getMaterial(const std::string& name) {
     NameToMaterialMapIt It = MaterialMap.find(name);

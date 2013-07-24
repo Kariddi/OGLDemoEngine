@@ -4,7 +4,7 @@
 #include <Node.h>
 #include <Light.h>
 #include <Camera.h>
-#include <Renderers/RenderPass.h>
+#include <Renderers/GLRenderPass.h>
 #include <Physics/DynamicsWorld.h>
 #include <algorithm>
 

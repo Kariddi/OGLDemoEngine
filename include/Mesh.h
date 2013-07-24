@@ -1,7 +1,7 @@
 #ifndef __UBERNGINE_MESH_H__
 #define __UBERNGINE_MESH_H__
 #include <vector>
-#include <Texture.h>
+#include <TextureData.h>
 #include <LoaderTraits.h>
 /*
   These structs contain the Mesh and material data
@@ -10,13 +10,13 @@
 namespace Uberngine {
 
 struct Material {
-  typedef std::vector<unsigned short> TextureIdxList;
+  typedef std::vector<unsigned short> TextureDataIdxList;
   float KAr, KAg, KAb;
   float KDr, KDg, KDb;
   float KSr, KSg, KSb;
   float Ns, Ni;
-  //Textures
-  TextureIdxList TextureIdx;
+  //TextureDatas
+  TextureDataIdxList TextureIdx;
   Material() {}
 };
 
@@ -78,17 +78,17 @@ struct AttributeInfo {
 struct Mesh {
   typedef std::vector<Part*> PartList;
   typedef PartList::iterator PartListIt;
-  typedef std::vector<Texture*> TextureList;
-  typedef TextureList::iterator TextureListIt;
+  typedef std::vector<TextureData*> TextureDataList;
+  typedef TextureDataList::iterator TextureDataListIt;
 
   AttributeInfo AttInfo;
   char *Vertices;
   unsigned int VerticesNum;
   std::vector<Part*> Parts;
-  std::vector<Texture*> Textures;
+  std::vector<TextureData*> Textures;
   Mesh(void *verts, unsigned int vert_num, const AttributeInfo &ai, 
        const std::vector<Part*>& parts, 
-       const TextureList &tex) : AttInfo(ai), Vertices(static_cast<char*>(verts)),
+       const TextureDataList &tex) : AttInfo(ai), Vertices(static_cast<char*>(verts)),
                                  VerticesNum(vert_num), Parts(parts), Textures(tex) {
     /*const unsigned char PadAmount[] = { 0, 3, 2, 1 };
     VertexStride = 3*LoaderElement<UBE_LOADER_FLOAT>::Size;
@@ -101,7 +101,7 @@ struct Mesh {
   ~Mesh() {
     for (PartListIt I = Parts.begin(), E = Parts.end(); I != E; ++I)
       delete *I;
-    for (TextureListIt I = Textures.begin(), E = Textures.end(); I != E; ++I)
+    for (TextureDataListIt I = Textures.begin(), E = Textures.end(); I != E; ++I)
       delete *I;
     if (Vertices)
       delete [] Vertices;
@@ -115,22 +115,22 @@ struct Mesh {
   typedef Part<V> PartTy;
   typedef std::vector<Part<V>*> PartList;
   typedef typename PartList::iterator PartListIt;
-  typedef std::vector<Texture*> TextureList;
-  typedef TextureList::iterator TextureListIt;
+  typedef std::vector<TextureData*> TextureList;
+  typedef TextureDataList::iterator TextureListIt;
 
   T *Vertices;
-  bool HasTexture;
+  bool HasTextureData;
   bool HasNormals;
   unsigned int VerticesNum;
   unsigned short VertexStride;
   std::vector<Part<V>*> Parts;
-  std::vector<Texture*> Textures;
+  std::vector<TextureData*> Textures;
   Mesh(T *verts, unsigned int vert_num, bool has_tex, bool has_norms, 
-       const std::vector<Part<V>*>& parts, const TextureList &tex) : Vertices(verts), HasTexture(has_tex), 
+       const std::vector<Part<V>*>& parts, const TextureDataList &tex) : Vertices(verts), HasTexture(has_tex), 
                                                                      HasNormals(has_norms), VerticesNum(vert_num), 
-                                                                     Parts(parts), Textures(tex) {
+                                                                     Parts(parts), TextureDatas(tex) {
     VertexStride = 3*sizeof(T);
-    if (HasTexture)
+    if (HasTextureData)
       VertexStride += 2*sizeof(T);
     if (HasNormals)
       VertexStride += 3*sizeof(T);
@@ -138,7 +138,7 @@ struct Mesh {
   ~Mesh() {
     for (PartListIt I = Parts.begin(), E = Parts.end(); I != E; ++I)
       delete *I;
-    for (TextureListIt I = Textures.begin(), E = Textures.end(); I != E; ++I)
+    for (TextureDataListIt I = Textures.begin(), E = Textures.end(); I != E; ++I)
       delete *I;
     if (Vertices)
       delete [] Vertices;

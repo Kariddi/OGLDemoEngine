@@ -6,7 +6,6 @@
 #include <glm/gtc/type_ptr.hpp> //value_ptr
 #include <glm/gtc/quaternion.hpp>
 #include <Renderers/GLRenderer.h>
-#include <Renderers/RendererTraits.h>
 #include <Physics/RigidBody.h>
 
 namespace Uberngine {
@@ -58,7 +57,7 @@ public:
   typedef typename NodeList::iterator NodeListIt;
 
 private:
-  typedef typename RendererTraits<RendererType>::RendererObjType NodeRendererTy;
+  typedef Renderer<RendererType> NodeRendererTy;
 
   Node<RendererType>* Parent;
   Scene<RendererType>* CurrentScene;

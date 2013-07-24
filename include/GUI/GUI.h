@@ -1,7 +1,7 @@
 #ifndef __UBERNGINE_GUI_H__
 #define __UBERNGINE_GUI_H__
 #include <vector>
-#include <Texture.h>
+#include <TextureData.h>
 #include <Shader.h>
 #include <Defs.h>
 

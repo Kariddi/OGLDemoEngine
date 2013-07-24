@@ -1,4 +1,4 @@
-#include <Texture.h>
+#include <TextureData.h>
 #include <cstring>
 #include <png.h>
 
@@ -8,7 +8,7 @@ TGA tga;												// TGA image data
 GLubyte uTGAcompare[12] = {0,0,2,0,0,0,0,0,0,0,0,0};	// Uncompressed TGA Header
 GLubyte cTGAcompare[12] = {0,0,10,0,0,0,0,0,0,0,0,0};	// Compressed TGA Header	
 
-bool LoadTGA(Texture * texture, const char * filename)				// Load a TGA file
+bool LoadTGA(TextureData * texture, const char * filename)				// Load a TGA file
 {
 	FILE * fTGA;												// File pointer to texture file
 	fTGA = fopen(filename, "rb");								// Open file for reading
@@ -46,7 +46,7 @@ bool LoadTGA(Texture * texture, const char * filename)				// Load a TGA file
 	return true;															// All went well, continue on
 }
 
-bool LoadUncompressedTGA(Texture * texture, const char * filename, FILE * fTGA)	// Load an uncompressed TGA (note, much of this code is based on NeHe's 
+bool LoadUncompressedTGA(TextureData * texture, const char * filename, FILE * fTGA)	// Load an uncompressed TGA (note, much of this code is based on NeHe's 
 {																			// TGA Loading code nehe.gamedev.net)
 	if(fread(tga.header, sizeof(tga.header), 1, fTGA) == 0)					// Read TGA header
 	{										
@@ -114,7 +114,7 @@ bool LoadUncompressedTGA(Texture * texture, const char * filename, FILE * fTGA)	
 	return true;															// Return success
 }
 
-bool LoadCompressedTGA(Texture * texture, const char * filename, FILE * fTGA)		// Load COMPRESSED TGAs
+bool LoadCompressedTGA(TextureData * texture, const char * filename, FILE * fTGA)		// Load COMPRESSED TGAs
 { 
 	if(fread(tga.header, sizeof(tga.header), 1, fTGA) == 0)					// Attempt to read header
 	{
@@ -322,7 +322,7 @@ void CleanPNG(FILE *fp, png_structp p_struct, png_infop p_info) {
     png_destroy_read_struct(&p_struct, &p_info, NULL);
 }
 
-bool LoadPNG(Texture *texture, const char *filename) {
+bool LoadPNG(TextureData *texture, const char *filename) {
   char header[8];
   FILE *image_f = NULL;
   png_structp png_ptr = NULL;
@@ -436,6 +436,6 @@ bool LoadPNG(Texture *texture, const char *filename) {
   return true;
 }
 
-bool LoadJPG(Texture *texture, const char *filename) {
+bool LoadJPG(TextureData *texture, const char *filename) {
   return false;
 }

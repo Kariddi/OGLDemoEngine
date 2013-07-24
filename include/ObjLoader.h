@@ -59,7 +59,7 @@ class ObjLoader {
   std::string TokString;
   std::string DirectoryPath;
   std::vector<LoaderPart> *PartsVector;
-  Uberngine::Mesh::TextureList TexList;
+  Uberngine::Mesh::TextureDataList TexList;
   LoaderPart CurrentPart;
   ParseIndexTy CurrentIndex;
   std::string CurrentMatLib;

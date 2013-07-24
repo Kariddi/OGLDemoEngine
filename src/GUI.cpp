@@ -1,6 +1,6 @@
 #include <GUI/GUI.h>
 #include <GUI/GUIElement.h>
-#include <Texture.h>
+#include <TextureData.h>
 #include <Shader.h>
 
 using namespace Uberngine;
@@ -26,7 +26,7 @@ const int FontInfo::YSize = 10;
 GUI::GUI() {
 
   FInfo = new FontInfo;
-  Texture *FontTexture = new Texture;
+  TextureData *FontTexture = new TextureData;
   if (!LoadPNG(FontTexture, "fonts.png")) {
     delete FontTexture;
     delete FInfo;

@@ -6,15 +6,23 @@
 #include <glm/gtc/matrix_transform.hpp> //translate, rotate, scale,
 #include <glm/gtc/matrix_inverse.hpp>
 #include <Renderers/Renderer.h>
+#include <Renderers/RenderingTarget.h>
+#include <Renderers/GLTextureTarget.h>
 #include <Defs.h>
 #include <OGL.h>
+#include <vector>
 
 namespace Uberngine {
 
-class GLRenderer : public Renderer<GLRenderer> {
-public:
-  typedef RendererTypes::OpenGL RenderType;
+template<>
+class Renderer<RendererTypes::OpenGL> {
+//public:
+//  typedef RendererTypes::OpenGL RenderType;
 private:
+
+  typedef RenderingTarget<RendererTypes::OpenGL, RenderTargetType::Texture> TextureTy;
+  typedef std::vector<TextureTy*> TexturesListTy;
+
   struct PartRenderCtx {
     GLuint PartVAO;
     GLuint VBO;
@@ -23,18 +31,36 @@ private:
   Mesh* NodeMesh;
   PartRenderCtx* RenderCTXs;
   GLuint VertVBO;
-  GLuint* Textures;
+  TexturesListTy TextureList;
   //GLuint Samplers[3];
-  Shader<RenderType>* ShaderProg;
+  Shader<RendererTypes::OpenGL>* ShaderProg;
   GLenum* GLIdxType;
   GLenum GLNormType;
   GLenum GLTexType;
+
+  inline ColorType DetermineColorType(const TextureData& td) {
+    if (td.type != GL_UNSIGNED_BYTE)
+      return ColorType::INVALID;
+    switch (td.format) {
+    case GL_RGB:
+      return ColorType::RGB;
+    case GL_RGBA:
+      return ColorType::RGBA;
+    case GL_LUMINANCE:
+      return ColorType::GRAY;
+    case GL_LUMINANCE_ALPHA:
+      return ColorType::GRAY_ALPHA;
+    }
+    return ColorType::INVALID;
+  }
   
 public:
 
-  GLRenderer() : NodeMesh(nullptr), RenderCTXs(nullptr), ShaderProg(nullptr), 
+  Renderer() : NodeMesh(nullptr), RenderCTXs(nullptr), ShaderProg(nullptr), 
     GLIdxType(nullptr), GLNormType(GL_FLOAT), GLTexType(GL_FLOAT) {}
   
+  ~Renderer() { SetMesh(nullptr); }
+
   void Render(const EngineReal* view_mat, const EngineReal* proj_mat, 
   	const glm::mat4& comulative, const LightList& lights) const {
 //  std::cout << "Rendering Node" << std::endl;
@@ -113,7 +139,7 @@ public:
           Loc = glGetUniformLocation(Program, ss.str().c_str());
           glUniform1i(Loc, i2);
           glActiveTexture(GL_TEXTURE0 + i2);
-          glBindTexture(GL_TEXTURE_2D, Textures[I->Mat.TextureIdx[i2]]);
+          glBindTexture(GL_TEXTURE_2D, TextureList[I->Mat.TextureIdx[i2]]->GetGLObject());
         }
     
         //Bind the vertex array and draw
@@ -135,10 +161,13 @@ public:
         glDeleteVertexArrays(1, &RenderCTXs[i].PartVAO);
         glDeleteBuffers(1, &RenderCTXs[i].VBO); 
       }
-      glDeleteTextures(old_tex_nums, Textures);
+      for (auto T : TextureList)
+        delete T;
     //  glDeleteSamplers(3, Samplers);
       delete [] RenderCTXs;
+      RenderCTXs = nullptr;
       delete [] GLIdxType;
+      GLIdxType = nullptr;
       glDeleteBuffers(1, &VertVBO);
     }
 
@@ -183,18 +212,12 @@ public:
     //Create textures
     int tex_num = mesh->Textures.size();
     if (tex_num > 0) {
-      Textures = new GLuint[tex_num];
-      glGenTextures(mesh->Textures.size(), Textures);
+      TextureList.resize(tex_num);
       for (int i = 0; i < tex_num; ++i) {
-        Texture &tex = *mesh->Textures[i];
-        glBindTexture(GL_TEXTURE_2D, Textures[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, tex.format,  tex.width, 
-                     tex.height, 0, tex.format, tex.type, 
-                     tex.imageData);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+        TextureData &tex = *mesh->Textures[i];
+        ColorType CT = DetermineColorType(tex);
+        TextureList[i] = new TextureTy(tex.width, tex.height, CT, tex.imageData);
       }
-      glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     //Create and prepare the VBOs
@@ -247,7 +270,7 @@ public:
     NodeMesh = mesh;
   }
 
-  void SetShader(Shader<RenderType>* shader) {
+  void SetShader(Shader<RendererTypes::OpenGL>* shader) {
     if (ShaderProg)
       delete ShaderProg;
     ShaderProg = shader;

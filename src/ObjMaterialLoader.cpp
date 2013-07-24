@@ -1,6 +1,6 @@
 #include "ObjMaterialLoader.h"
 #include <sstream>
-#include <Texture.h>
+#include <TextureData.h>
 
 #define REGISTER_ERROR(message) if (record_errors && !no_error) \
                                   Errors.push_back(message + "\n");
@@ -72,7 +72,7 @@ bool ObjMaterialLoader::parseDiffuseMap() {
   else
     return false;
 
-  Texture *NewTexture = new Texture;
+  TextureData *NewTexture = new TextureData;
 
   if (is_tga && LoadTGA(NewTexture, (DirectoryPath + ReadData).c_str())) {
     TexList->push_back(NewTexture);
@@ -118,7 +118,7 @@ bool ObjMaterialLoader::parseNi() {
   return !ss.fail(); 
 }
 
-bool ObjMaterialLoader::loadMaterialFile(const string &filename, Uberngine::Mesh::TextureList *tlist, bool record_errors) {
+bool ObjMaterialLoader::loadMaterialFile(const string &filename, Uberngine::Mesh::TextureDataList *tlist, bool record_errors) {
 
  string full_pathname = DirectoryPath + filename;
  MaterialFile.open(full_pathname.c_str(), ifstream::in);

@@ -14,7 +14,7 @@
 
 #include <math.h>
 
-struct Texture									
+struct TextureData	
 {
 	GLubyte	* imageData;									// Image Data (Up To 32 Bits)
 	GLuint	bpp;											// Image Color Depth In Bits Per Pixel
@@ -22,7 +22,7 @@ struct Texture
 	GLuint	height;											// Image Height
         GLuint	format;										// Image Type (GL_RGB, GL_RGBA)
 	GLenum  type;
-        ~Texture() { free(imageData); }
+        ~TextureData() { free(imageData); }
 };	
 
 typedef struct
@@ -43,10 +43,10 @@ typedef struct
 	GLuint		Bpp;									// Bits Per Pixel
 } TGA;
 
-bool LoadTGA(Texture * texture, const char * filename);
-bool LoadCompressedTGA(Texture * texture, const char * filename, FILE * fTGA);
-bool LoadUncompressedTGA(Texture * texture, const char * filename, FILE * fTGA);
-bool LoadPNG(Texture *texture, const char *filename);
-bool LoadJPG(Texture *texture, const char *filename);
+bool LoadTGA(TextureData * texture, const char * filename);
+bool LoadCompressedTGA(TextureData * texture, const char * filename, FILE * fTGA);
+bool LoadUncompressedTGA(TextureData * texture, const char * filename, FILE * fTGA);
+bool LoadPNG(TextureData *texture, const char *filename);
+bool LoadJPG(TextureData *texture, const char *filename);
 
 #endif

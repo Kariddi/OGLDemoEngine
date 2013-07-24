@@ -8,9 +8,10 @@
 
 namespace Uberngine {
 
-template<typename Derived>
+template<typename RendererType>
 class Renderer {
 
+/*
 public:
   void Render(const EngineReal* view_mat, const EngineReal* proj_mat, 
   	const glm::mat4& comulative, const LightList& lights) const {
@@ -20,6 +21,7 @@ public:
   void SetMesh(Mesh* mesh) {
   	static_cast<Derived*>(this)->SetMesh(mesh);
   }
+*/
 /*  // TODO: This should be changed to Effect, a less render specific class
   void SetShader(Shader<typename Derived::RenderType>* shader) {
     static_cast<Derived*>(this)->SetShader(shader);
