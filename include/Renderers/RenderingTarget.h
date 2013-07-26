@@ -9,6 +9,7 @@ namespace RenderTargetType {
 
   struct Texture;
   struct Buffer;
+  struct Default;
 
 }
 
@@ -21,7 +22,8 @@ enum class ColorType : std::uint8_t {
   RGBA,
   GRAY,
   GRAY_ALPHA,
-  ALPHA
+  ALPHA,
+  DEPTH
 
 };
 

@@ -1,8 +1,10 @@
 #include <IOSEngine.h>
 
+using namespace Uberngine;
+
 //Renders the loaded scene
 void Engine<UBE_IOS>::RenderScene() {
-  glBindFramebuffer(GL_FRAMEBUFFER, Sys.GetDrawFramebufferObject());
+  DefaultSurface->LoadSurface();
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   if (DepthTestEnabled) {

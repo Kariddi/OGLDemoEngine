@@ -6,6 +6,7 @@
 #include <EngineTraits.h>
 #include <Node.h>
 #include <Physics/PhysicsManager.h>
+#include <Scene.h>
 #include <OGLSystemFacilities.h>
 #include <GUI/GUI.h>
 #include <Defs.h>
@@ -17,8 +18,8 @@
 
 namespace Uberngine {
 
-template<typename RendererType>
-class Scene;
+//template<typename RendererType>
+//class Scene;
 class GUI;
 
 class PureEngine {

@@ -2,8 +2,8 @@
 
 using namespace Uberngine;
 
-EAGLSystemFacilities::EAGLSystemFacilities(CAEAGLLayer *layer) : OGLSystemFacilities<EAGLSystemFacilities>(0), 
-  EAGLLayer(layer) {
+EAGLSystemFacilities::EAGLSystemFacilities(CAEAGLLayer* layer, CADisplayLink* display_link) : OGLSystemFacilities<EAGLSystemFacilities>(0),
+  EAGLLayer(layer), DisplayLink(display_link) {
   
   GLCtx = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
   if (GLCtx != nil)
@@ -37,25 +37,22 @@ bool EAGLSystemFacilities::CreateAndSetRenderContext(int *width, int *height, in
                                   kEAGLDrawablePropertyRetainedBacking, ColorFormat, kEAGLDrawablePropertyColorFormat,
                                   nil];
 
-  glGenFramebuffers(1, &DrawFramebuffer);
-  glBindFramebuffer(GL_FRAMEBUFFER, DrawFramebuffer);
   glGenRenderbuffers(2, Renderbuffers);
   glBindRenderbuffer(GL_RENDERBUFFER, Renderbuffers[0]);
   [GLCtx renderbufferStorage:GL_RENDERBUFFER fromDrawable: EAGLLayer];
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, Renderbuffers[0]);
   glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, width);
   glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, height);
   
   glBindRenderbuffer(GL_RENDERBUFFER, Renderbuffers[1]);
   glRenderbufferStorage(GL_RENDERBUFFER, DepthBufferFormat, *width, *height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, Renderbuffers[1]);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0,0,*width,*height); 
   return true;
 }
 
 // TODO: Implement
-float EAGLSystemFacilities::GetTime() { return 0.0f; }
+CFTimeInterval EAGLSystemFacilities::GetTime() {
+  return [DisplayLink timestamp];
+}
 
 void EAGLSystemFacilities::SwapBuffers() {
   glBindRenderbuffer(GL_RENDERBUFFER, Renderbuffers[0]);

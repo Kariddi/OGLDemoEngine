@@ -3,6 +3,9 @@ project (Demo)
 
 include_directories ("${PROJECT_SOURCE_DIR}/include")
 file(GLOB_RECURSE INCS "include/*.h")
+
+if (NOT IOS)
+
 FIND_PACKAGE(Bullet REQUIRED)
 SET(EXTRA_LIBS ${EXTRA_LIBS} ${BULLET_LIBRARIES})
 INCLUDE_DIRECTORIES(${BULLET_INCLUDE_DIR})
@@ -10,8 +13,18 @@ FIND_PACKAGE(PNG REQUIRED)
 SET(EXTRA_LIBS ${EXTRA_LIBS} ${PNG_LIBRARIES})
 INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
 
+else (NOT IOS)
+
+#SET(EXTRA_LIBS ${EXTRA_LIBS} ${BULLET_MATH_LIBRARY} ${BULLET_SOFTBODY_LIBRARY} ${BULLET_DYNAMICS_LIBRARY} ${BULLET_COLLISION_LIBRARY} )
+#INCLUDE_DIRECTORIES(${BULLET_INCLUDE_DIR})
+
+#SET(EXTRA_LIBS ${EXTRA_LIBS} ${PNG_LIBRARY})
+#INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIR})
+
+endif (NOT IOS)
+
 SET(COMMON_FILES src/TextureData.cpp src/Shader.cpp src/PhysicsManager.cpp src/RigidBody.cpp src/CollisionShape.cpp src/Scene.cpp src/Node.cpp src/GUI.cpp src/GUILabel.cpp src/Camera.cpp src/ObjMaterialLoader.cpp)
-SET(OPENGL_FILES src/GLRenderingSurface.cpp src/GLTextureTarget.cpp)
+SET(OPENGL_FILES src/GLRenderingSurface.cpp src/GLTextureTarget.cpp src/GLBufferTarget.cpp)
 SET(GLFW_FILES src/GLFWSystemFacilities.cpp src/GLFWEngine.cpp)
 SET(IOS_FILES src/EAGLSystemFacilities.mm src/IOSEngine.cpp)
 SET(compile_flags "${compile_flags} -std=c++11")
@@ -69,10 +82,10 @@ SET(link_flags "${link_flags} -lc++")
 endif (APPLE AND (NOT IOS))
 
 if (APPLE AND IOS)
-ADD_LIBRARY(Uberngine STATIC ${IOS_FILES} ${COMMON_FILES} ${INCS}) 
+ADD_LIBRARY(Uberngine STATIC ${OPENGL_FILES} ${IOS_FILES} ${COMMON_FILES} ${INCS}) 
 SET(compile_flags "${compile_flags} -stdlib=libc++")
 SET(link_flags "${link_flags} -lc++")
-SET_TARGET_PROPERTIES(Uberngine PROPERTIES COMPILE_FLAGS "-x objective-c++ -fobjc-arc")
+SET(compile_flags "${compile_flags} -x objective-c++ -fobjc-arc")
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
   SET_TARGET_PROPERTIES(Uberngine PROPERTIES XCODE_ATTRIBUTE_GCC_GENERATE_DEBUGGING_SYMBOLS "YES")
 endif (CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -83,12 +96,14 @@ SET_TARGET_PROPERTIES(Uberngine PROPERTIES COMPILE_FLAGS ${compile_flags})
 SET_TARGET_PROPERTIES(Uberngine PROPERTIES LINK_FLAGS ${link_flags})
 endif(APPLE AND IOS)
 
+if (NOT IOS)
 if (APPLE)
   SET_TARGET_PROPERTIES(Demo PROPERTIES COMPILE_FLAGS ${compile_flags})
   SET_TARGET_PROPERTIES(Demo PROPERTIES LINK_FLAGS ${link_flags})
 endif (APPLE)
 
 SET_TARGET_PROPERTIES(Demo PROPERTIES COMPILE_FLAGS ${compile_flags})
+endif (NOT IOS)
 
 if (APPLE AND IOS)
 target_link_libraries(Uberngine ${EXTRA_LIBS})
