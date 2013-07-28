@@ -15,13 +15,15 @@ class RenderPass<RendererTypes::OpenGL> {
   typedef Camera<RendererType> CameraTy;
   typedef Shader<RendererType> ShaderTy;
   typedef Renderer<RendererType> RendererTy;
+  typedef RenderingTarget<RendererType, RenderTargetType::Texture> RenderingTextureTy;
   typedef RenderingSurface<RendererType> RenderingSurfaceTy;
+  typedef std::vector<RenderingTextureTy*> RendTextureListTy;
   typedef std::vector<RenderingSurfaceTy*> RendSurfaceListTy;
   typedef std::vector<RendererTy*> RendererListTy;
 
   CameraTy* PassCamera;
   ShaderTy* PassShader;
-  RendSurfaceListTy InputSurfaces;
+  RendTextureListTy InputSurfaces;
   RendSurfaceListTy OutputSurfaces;
   RendererListTy Renderers;
 
