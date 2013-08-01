@@ -19,7 +19,7 @@ Makefile
 *.exe
 *.swp
 *.vim
-*.obj
-*.mtl
+#*.obj
+#*.mtl
 *.lib
-*.tga
+#*.tga
