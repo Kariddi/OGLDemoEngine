@@ -21,10 +21,15 @@ class RenderPass<RendererTypes::OpenGL> {
   typedef std::vector<RenderingSurfaceTy*> RendSurfaceListTy;
   typedef std::vector<RendererTy*> RendererListTy;
 
+  // Camera to use for the render pass
   CameraTy* PassCamera;
+  // Shader program to use for the render pass
   ShaderTy* PassShader;
+  // Input textures for the render pass
   RendTextureListTy InputSurfaces;
-  RendSurfaceListTy OutputSurfaces;
+  // Output surface for the render pass
+  RenderingSurfaceTy* OutputSurface;
+  // Objects that the render pass should draw
   RendererListTy Renderers;
 
 public:
