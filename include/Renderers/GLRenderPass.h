@@ -22,7 +22,7 @@ class RenderPass<RendererTypes::OpenGL> {
   typedef std::vector<RendererTy*> RendererListTy;
 
   // Camera to use for the render pass
-  CameraTy* PassCamera;
+//  CameraTy* PassCamera;
   // Shader program to use for the render pass
   ShaderTy* PassShader;
   // Input textures for the render pass
@@ -34,7 +34,14 @@ class RenderPass<RendererTypes::OpenGL> {
 
 public:
 
-  void Render() {}
+  void Render(const EngineReal* view_mat, const EngineReal* proj_mat, 
+  	const LightList& lights) const {
+
+    for (auto Renderer : Renderers) {
+      Renderer->Render(view_mat, proj_mat, lights, 0);
+    }
+
+  }
 
 };
 

@@ -37,6 +37,7 @@ private:
   GLenum* GLIdxType;
   GLenum GLNormType;
   GLenum GLTexType;
+  const glm::mat4& Comulative;
 
   inline ColorType DetermineColorType(const TextureData& td) {
     if (td.type != GL_UNSIGNED_BYTE)
@@ -56,13 +57,14 @@ private:
   
 public:
 
-  Renderer() : NodeMesh(nullptr), RenderCTXs(nullptr), ShaderProg(nullptr), 
-    GLIdxType(nullptr), GLNormType(GL_FLOAT), GLTexType(GL_FLOAT) {}
+  Renderer(const glm::mat4& comulative) : NodeMesh(nullptr), RenderCTXs(nullptr), 
+    ShaderProg(nullptr), GLIdxType(nullptr), GLNormType(GL_FLOAT), GLTexType(GL_FLOAT),
+    Comulative(comulative) {}
   
   ~Renderer() { SetMesh(nullptr); }
 
   void Render(const EngineReal* view_mat, const EngineReal* proj_mat, 
-  	const glm::mat4& comulative, const LightList& lights) const {
+  	const LightList& lights, std::uint8_t activated_textures) const {
 //  std::cout << "Rendering Node" << std::endl;
   //If the node doesn't have an associated mesh or the shader is invalid don't render
     if (NodeMesh && ShaderProg && ShaderProg->isValid()) {
@@ -78,11 +80,11 @@ public:
       glUniformMatrix4fv(Loc, 1, GL_FALSE, proj_mat);
       //Setting the Model matrix
       Loc = glGetUniformLocation(Program, "M");
-      glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(comulative));
+      glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(Comulative));
       //Setting the Inverse transform matrix for normal transformation
       Loc = glGetUniformLocation(Program, "MVN");
       glm::mat4 View = glm::make_mat4(view_mat);
-      glm::mat4 InvTView = View*comulative;
+      glm::mat4 InvTView = View*Comulative;
       InvTView = glm::inverseTranspose(InvTView);
       glUniformMatrix4fv(Loc, 1, GL_FALSE, glm::value_ptr(InvTView));
     
@@ -132,8 +134,8 @@ public:
         //  glBindSampler(i, Samplers[i]);
     
         //Set textures
-        int tex_num = I->Mat.TextureIdx.size();
-        for (int i2 = 0; i2 < tex_num; ++i2) {
+        int tex_num = I->Mat.TextureIdx.size() + activated_textures;
+        for (int i2 = activated_textures; i2 < tex_num; ++i2) {
           std::stringstream ss;
           ss << "Textures[" << i2 << "]";
           Loc = glGetUniformLocation(Program, ss.str().c_str());

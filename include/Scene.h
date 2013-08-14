@@ -36,11 +36,12 @@ template<typename RendererType>
 class Scene : public PureScene {
 public:
   typedef RenderPass<RendererType> RenderPassTy;
+  typedef std::vector<RenderPassTy> RenderPassList;
 private:
   typename Node<RendererType>::NodeList Nodes;
   Node<RendererType>* RootNode;
   Camera<RendererType>* Cam;
-  RenderPass<RendererType>* RendPass;
+  RenderPassList RenderPasses;
 
   Scene(PhysicsManager* p_manager);
   void DetachNode(const Node<RendererType>& child);
@@ -81,9 +82,15 @@ Scene<RendererType>::~Scene() {
 
 template<typename RendererType>
 void Scene<RendererType>::RenderScene() {
+
+  //for (auto RenderPass : RenderPasses) {
+  //  RenderPass.Render(Cam->GetViewMatrix(), Cam->GetProjMatrix(),
+  //    Lights);
+  //}
+
   for (auto Node : Nodes) {
     Node->GetRenderer().Render(Cam->GetViewMatrix(), Cam->GetProjMatrix(), 
-      Node->GetComulative(), Lights);
+      Lights, 0);
   }
 }
 
@@ -106,6 +113,7 @@ void Scene<RendererType>::AttachNodeToParent(Node<RendererType>& child, Node<Ren
   }
   parent.AddChildNode(&child);
   SetRigidBodyForNode(child.GetRigidBody(), &child);
+  
 }
 
 template<typename RendererType>

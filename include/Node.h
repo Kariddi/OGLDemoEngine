@@ -73,7 +73,7 @@ private:
 
   friend class Scene<RendererType>;
 public:
-  Node() : PureNode(), Parent(nullptr), CurrentScene(nullptr) {}
+  Node() : PureNode(), Parent(nullptr), CurrentScene(nullptr), Rend(Comulative) {}
   ~Node() { SetMesh(nullptr); }
  //Attaches a mesh to this Node
   void SetMesh(Mesh* mesh);
