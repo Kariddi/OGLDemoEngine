@@ -2,15 +2,16 @@
 
 using namespace Uberngine;
 
+Scene<RendererTypes::OpenGL>* Engine<UBE_IOS>::CreateNewScene() {
+    Scene<RendererTypes::OpenGL>* NewScene =
+    new Scene<RendererTypes::OpenGL>(&PhysMan, DefaultSurface);
+    
+    Scenes.push_back(NewScene);
+    return NewScene;
+}
+
 //Renders the loaded scene
 void Engine<UBE_IOS>::RenderScene() {
-  DefaultSurface->LoadSurface();
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-  if (DepthTestEnabled) {
-    glClearDepth(1.0f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-  }
   Scenes[CurrScene]->RenderScene();
   if (Gui != NULL)
     RenderGUI();

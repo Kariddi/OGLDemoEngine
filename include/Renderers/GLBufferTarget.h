@@ -12,6 +12,8 @@ namespace Uberngine {
 template<>
 class RenderingTarget<RendererTypes::OpenGL, RenderTargetType::Buffer> : public GLRenderingTarget {
 
+  const bool NeedsDelete;
+
 public:
   RenderingTarget(std::uint16_t width, std::uint16_t height, ColorType ct);
   RenderingTarget(std::uint16_t width, std::uint16_t height, GLuint gl_object);

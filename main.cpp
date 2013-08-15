@@ -76,11 +76,11 @@ int main(int argc, char **argv)
   //Creating a scene
   SceneTy *SC = Eng.CreateNewScene();
   //Creating nodes
-  NodeTy *MyNode = SC->CreateNewNode();
-  NodeTy *MyNode2 = SC->CreateNewNode();
-  NodeTy *MyNode3 = SC->CreateNewNode();
+  NodeTy *MyNode = SC->CreateNewNodeAndAttach();
+  NodeTy *MyNode2 = SC->CreateNewNodeAndAttach();
+  NodeTy *MyNode3 = SC->CreateNewNodeAndAttach();
  
-  SC->AttachNodeToParent(*MyNode2, *MyNode);
+  SC->AttachNodeToParentAndDefaultRenderPass(*MyNode2, *MyNode);
   //Creating the camera
   CameraTy *Cam = new CameraTy();
   //Set perspective parameters

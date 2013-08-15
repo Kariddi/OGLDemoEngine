@@ -4,7 +4,8 @@ using namespace Uberngine;
 
 RenderingTarget<RendererTypes::OpenGL, RenderTargetType::Buffer>::
   RenderingTarget(std::uint16_t width, std::uint16_t height, ColorType ct) :
-  GLRenderingTarget(width, height, GLRenderingTarget::TargetType::Buffer) {
+  GLRenderingTarget(width, height, GLRenderingTarget::TargetType::Buffer),
+  NeedsDelete(true) {
 
   GLenum Format = GL_RGB;
 
@@ -36,9 +37,11 @@ error:
 
 RenderingTarget<RendererTypes::OpenGL, RenderTargetType::Buffer>::
   RenderingTarget(std::uint16_t width, std::uint16_t height, GLuint gl_object) :
-  GLRenderingTarget(width, height, GLRenderingTarget::TargetType::Buffer, gl_object) {}
+  GLRenderingTarget(width, height, GLRenderingTarget::TargetType::Buffer, gl_object),
+  NeedsDelete(false) {}
 
 RenderingTarget<RendererTypes::OpenGL, RenderTargetType::Buffer>::
   ~RenderingTarget() {
-  glDeleteRenderbuffers(1, &GLObject);
+  if (NeedsDelete)
+    glDeleteRenderbuffers(1, &GLObject);
 }

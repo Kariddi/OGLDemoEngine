@@ -5,6 +5,7 @@
 #include <Light.h>
 #include <Camera.h>
 #include <Renderers/GLRenderPass.h>
+#include <Renderers/GLRenderingSurface.h>
 #include <Physics/DynamicsWorld.h>
 #include <algorithm>
 
@@ -36,17 +37,21 @@ template<typename RendererType>
 class Scene : public PureScene {
 public:
   typedef RenderPass<RendererType> RenderPassTy;
-  typedef std::vector<RenderPassTy> RenderPassList;
+  typedef Shader<RendererType> ShaderTy;
+  typedef RenderingSurface<RendererType> RenderingSurfaceTy;
+  typedef std::vector<RenderPassTy*> RenderPassList;
 private:
   typename Node<RendererType>::NodeList Nodes;
   Node<RendererType>* RootNode;
   Camera<RendererType>* Cam;
   RenderPassList RenderPasses;
 
-  Scene(PhysicsManager* p_manager);
+  Scene(PhysicsManager* p_manager, const RenderingSurfaceTy* r_surface);
   void DetachNode(const Node<RendererType>& child);
   template<typename Derived>
   friend class BaseEngine;
+  template<PlatformType pt>
+  friend class Engine;
 public:
 
   ~Scene();
@@ -61,17 +66,29 @@ public:
   //Adds a light to the scene
   void AttachNodeToParent(Node<RendererType>& child, Node<RendererType>& parent);
   void AttachNodeToScene(Node<RendererType>& child);
+  void AttachNodeToParentAndDefaultRenderPass(Node<RendererType>& child, Node<RendererType>& parent);
+  void AttachNodeToSceneAndDefaultRenderPass(Node<RendererType>& child);
   Node<RendererType>* CreateNewNode();
+  Node<RendererType>* CreateNewNodeAndAttach();
   Node<RendererType>* GetRootNode() const { return RootNode; }
   //void AssociateShader(MeshId mid, Shader sh);
 };
 
 template<typename RendererType>
-Scene<RendererType>::Scene(PhysicsManager* p_manager) 
-  : PureScene(p_manager), RootNode(new Node<RendererType>), Cam(nullptr) {}
+Scene<RendererType>::Scene(PhysicsManager* p_manager, const RenderingSurfaceTy* r_surface) 
+  : PureScene(p_manager), RootNode(new Node<RendererType>), Cam(nullptr) {
+
+  RenderPasses.push_back(new RenderPassTy);
+  RenderPasses[0]->SetOutputSurface(r_surface);
+}
 
 template<typename RendererType>
 Scene<RendererType>::~Scene() {
+
+  for (auto I : RenderPasses) {
+    delete I;
+  }
+
   for (auto I : Nodes) { 
     delete I;
   }
@@ -83,15 +100,15 @@ Scene<RendererType>::~Scene() {
 template<typename RendererType>
 void Scene<RendererType>::RenderScene() {
 
-  //for (auto RenderPass : RenderPasses) {
-  //  RenderPass.Render(Cam->GetViewMatrix(), Cam->GetProjMatrix(),
-  //    Lights);
-  //}
-
-  for (auto Node : Nodes) {
-    Node->GetRenderer().Render(Cam->GetViewMatrix(), Cam->GetProjMatrix(), 
-      Lights, 0);
+  for (auto RenderPass : RenderPasses) {
+    RenderPass->Render(Cam->GetViewMatrix(), Cam->GetProjMatrix(),
+      Lights);
   }
+
+// for (auto Node : Nodes) {
+//   Node->GetRenderer().Render(Cam->GetViewMatrix(), Cam->GetProjMatrix(), 
+//     Lights, 0);
+// }
 }
 
 template<typename RendererType>
@@ -117,6 +134,21 @@ void Scene<RendererType>::AttachNodeToParent(Node<RendererType>& child, Node<Ren
 }
 
 template<typename RendererType>
+void Scene<RendererType>::AttachNodeToParentAndDefaultRenderPass(Node<RendererType>& child, Node<RendererType>& parent) {
+  Scene* SC = child.GetScene();
+  if (SC == nullptr || SC != this) {
+    if (SC != nullptr)
+      SC->DetachNode(child);
+    child.SetScene(this);
+    Nodes.push_back(&child);
+  }
+  parent.AddChildNode(&child);
+  SetRigidBodyForNode(child.GetRigidBody(), &child);
+  RenderPasses[0]->AddObject(&child.GetRenderer());
+  
+}
+
+template<typename RendererType>
 void Scene<RendererType>::DetachNode(const Node<RendererType>& child) {
   typename Node<RendererType>::NodeListIt It = std::find(Nodes.begin(), Nodes.end(), &child);
   assert(It != Nodes.end() && "Node not present during detach");
@@ -132,9 +164,25 @@ void Scene<RendererType>::AttachNodeToScene(Node<RendererType>& child) {
 }
 
 template<typename RendererType>
+void Scene<RendererType>::AttachNodeToSceneAndDefaultRenderPass(Node<RendererType>& child) {
+  Scene* SC = child.GetScene();
+  if (SC != nullptr)
+    SC->DetachNode(child);
+  AttachNodeToParentAndDefaultRenderPass(child, *RootNode);
+}
+
+template<typename RendererType>
 Node<RendererType>* Scene<RendererType>::CreateNewNode() {
   Node<RendererType>* NewNode = new Node<RendererType>();
   AttachNodeToScene(*NewNode);
+
+  return NewNode;
+}
+
+template<typename RendererType>
+Node<RendererType>* Scene<RendererType>::CreateNewNodeAndAttach() {
+  Node<RendererType>* NewNode = new Node<RendererType>();
+  AttachNodeToSceneAndDefaultRenderPass(*NewNode);
 
   return NewNode;
 }

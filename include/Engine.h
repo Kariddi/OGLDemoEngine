@@ -91,8 +91,9 @@ template<typename Derived>
 Scene<typename BaseEngine<Derived>::RendererType>* BaseEngine<Derived>::CreateNewScene() {
 
   Scene<typename BaseEngine<Derived>::RendererType>* NewScene = 
-    new Scene<typename BaseEngine<Derived>::RendererType>(&PhysMan);
-  Scenes.push_back(NewScene);
+    static_cast<Derived*>(this)->CreateNewScene();
+
+    //new Scene<typename BaseEngine<Derived>::RendererType>(&PhysMan);
 
   return NewScene;
 }

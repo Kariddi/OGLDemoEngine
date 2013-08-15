@@ -44,6 +44,14 @@ bool Engine<UBE_GLFW>::Init(const char *window_title, int width, int height, int
 
 }
 
+Scene<RendererTypes::OpenGL>* Engine<UBE_GLFW>::CreateNewScene() {
+  Scene<RendererTypes::OpenGL>* NewScene = 
+    new Scene<RendererTypes::OpenGL>(&PhysMan, DefaultSurface);
+
+  Scenes.push_back(NewScene);
+  return NewScene;
+}
+
 void Engine<UBE_GLFW>::SetPressedKeyCallback(KeyCallbackTy kc) {
   this->Sys.SetPressedKeyCallback(kc);
 }
@@ -51,13 +59,6 @@ void Engine<UBE_GLFW>::SetPressedKeyCallback(KeyCallbackTy kc) {
 //Renders the loaded scene
 void Engine<UBE_GLFW>::RenderScene() {
 //  glBindFramebuffer(GL_FRAMEBUFFER, Sys.GetDrawFramebufferObject());
-  DefaultSurface->LoadSurface();
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-  if (DepthTestEnabled) {
-    glClearDepth(1.0f);
-    glClear(GL_DEPTH_BUFFER_BIT);
-  }
   Scenes[CurrScene]->RenderScene();
   if (Gui != NULL)
     RenderGUI();

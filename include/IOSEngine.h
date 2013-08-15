@@ -63,6 +63,8 @@ public:
   GLuint GetColorRenderbuffer() const { return this->Sys.GetColorRenderbuffer(); }
   GLuint GetDepthRenderbuffer() const { return this->Sys.GetDepthRenderbuffer(); }
   EAGLSystemFacilities *GetSysFacilities() { return static_cast<EAGLSystemFacilities*>(&this->Sys); }
+    
+  Scene<RendererTypes::OpenGL>* CreateNewScene();
     //Renders the loaded scene
   void RenderScene();
 

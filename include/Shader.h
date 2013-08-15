@@ -27,7 +27,7 @@ class Shader<RendererTypes::OpenGL> : public PureShader {
 
 public:
   Shader(std::string vertex_shader, std::string fragment_shader);
-  GLuint getProgram() { return Program; }
+  GLuint getProgram() const { return Program; }
 };
 
 }

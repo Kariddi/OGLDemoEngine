@@ -32,6 +32,7 @@ public:
 
   bool Init(const char *window_title, int width, int height, int c_bits, 
                       int d_bits, int s_bits, bool fullscreen);
+  Scene<RendererTypes::OpenGL>* CreateNewScene();
   void SetPressedKeyCallback(KeyCallbackTy kc);
   bool CheckPressedKey(int key) { return Sys.GetPressedKey(key); }
   //Retrieves the mouse position
