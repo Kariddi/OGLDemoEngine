@@ -115,7 +115,7 @@ int main(int argc, char **argv)
   Plane->SetShader(shad);
   //Setting node and camera transformations
   MyNode2->SetTransform(0.0f, 0.0f, -0.0f, 0.0f, 0.0f,0.0f,0.0f);
-  Plane->SetTransform(0.0f, -4.0f, 0.0f, 0.0f, 1.0f,0.0f,0.0f);
+  Plane->SetTransform(0.0f, -3.5f, 0.0f, 0.0f, 1.0f,0.0f,0.0f);
   MyNode3->SetTransform(0.0f, -4.0f, 0.0f, 0.5f, 0.0f, 0.0f, 1.0f);
   Cam->LookAt(0.0f, 0.0f, -6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
   float xm = 0.0f, ym = 0.0f, zm = 0.0f;
