@@ -501,6 +501,25 @@ unsigned int Loader::binaryFind(T start, T end, const ValTy &Val) {
   return 0;
 }*/
 
+template<typename ValType>
+static inline bool isEqual(ValType a, ValType b, float threshold) {
+
+  static_assert(std::is_floating_point<ValType>::value ||
+                std::is_integral<ValType>::value, "Must be either a float or an int value");
+
+  if (std::is_floating_point<ValType>::value) {
+    
+    return fabsf(a - b) < threshold;
+  } else if (std::is_integral<ValType>::value) {
+    float af = ((float) a) / (std::numeric_limits<ValType>::max() - std::numeric_limits<ValType>::min());
+    float bf = ((float) b) / (std::numeric_limits<ValType>::max() - std::numeric_limits<ValType>::min());
+
+    return fabs(af - bf) < threshold;
+  }
+
+  return false;
+}
+
 template<Uberngine::ElementType Texture, Uberngine::ElementType Normal>
 void ObjLoader<Texture, Normal>::removeRedundantVertices(ParseIndexTy *indices) {
 
@@ -547,27 +566,28 @@ void ObjLoader<Texture, Normal>::removeRedundantVertices(ParseIndexTy *indices) 
         ParseIndexTy i2 = (*I2)*NumAttribs;
         ParseIndexTy IDX1 = Vertices[i1];
         ParseIndexTy IDX2 = Vertices[i2];
-        if (IDX1 == IDX2) {
-          indices[*I2] = *I;
-          continue;
-        }
+//        if (IDX1 == IDX2) {
+//          indices[*I2] = *I;
+//          continue;
+//        }
         bool equal = true;
         //Check Vertex Position Data
-        if (!(fabsf(PosData->at(IDX1) - PosData->at(IDX2)) < threshold &&
-            fabsf(PosData->at(IDX1+1) - PosData->at(IDX2+1)) < threshold &&
-            fabsf(PosData->at(IDX1+2) - PosData->at(IDX2+2)) < threshold))
+        if (!(isEqual(PosData->at(IDX1), PosData->at(IDX2), threshold) &&
+           isEqual(PosData->at(IDX1+1), PosData->at(IDX2+1), threshold) &&
+            isEqual(PosData->at(IDX1+2), PosData->at(IDX2+2), threshold)))
           equal = false;
         IDX1 = Vertices[i1+1];
         IDX2 = Vertices[i2+1];
-        if (HasTex && equal && !(fabsf(TextureData->at(IDX1) - TextureData->at(IDX2)) < threshold &&
-            fabsf(TextureData->at(IDX1+1) - TextureData->at(IDX2+1)) < threshold))
+        if (HasTex && equal && !(isEqual(TextureData->at(IDX1), TextureData->at(IDX2), threshold) &&
+            isEqual(TextureData->at(IDX1+1), TextureData->at(IDX2+1), threshold)))
           equal = false;
         IDX1 = Vertices[i1+norm_idx_off+1];
         IDX2 = Vertices[i2+norm_idx_off+1];
-        if (HasNorm && equal && !(fabsf(NormalData->at(IDX1) - NormalData->at(IDX2)) < threshold &&
-            fabsf(NormalData->at(IDX1+1) - NormalData->at(IDX2+1)) < threshold &&
-            fabsf(NormalData->at(IDX1+2) - NormalData->at(IDX2+2)) < threshold))
+        if (HasNorm && equal && !(isEqual(NormalData->at(IDX1), NormalData->at(IDX2), threshold) &&
+            isEqual(NormalData->at(IDX1+1), NormalData->at(IDX2+1), threshold) &&
+            isEqual(NormalData->at(IDX1+2), NormalData->at(IDX2+2), threshold))) {
           equal = false;
+        }
         if (equal) {
           indices[*I2] = *I;
           *I2 = *I;

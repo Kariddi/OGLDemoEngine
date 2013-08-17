@@ -64,6 +64,7 @@ int main(int argc, char **argv)
   //Loading Meshes
   Mesh *mesh = NULL;
   Mesh *mesh2 = NULL;
+  Mesh *plane = NULL;
   GUI *gui = Eng.GetGUI();
   GUILabel *lab = new GUILabel(gui);
   lab->SetXPos(100);
@@ -79,6 +80,7 @@ int main(int argc, char **argv)
   NodeTy *MyNode = SC->CreateNewNodeAndAttach();
   NodeTy *MyNode2 = SC->CreateNewNodeAndAttach();
   NodeTy *MyNode3 = SC->CreateNewNodeAndAttach();
+  NodeTy *Plane = SC->CreateNewNodeAndAttach();
  
   SC->AttachNodeToParentAndDefaultRenderPass(*MyNode2, *MyNode);
   //Creating the camera
@@ -89,10 +91,12 @@ int main(int argc, char **argv)
   SC->SetCamera(Cam);
   //Set mesh on the node (Torus mesh)
   mesh2 = load.loadMesh("Spiderman.obj", false);
-  
+  plane = load.loadMesh("plane.obj", false);
+
   MyNode->SetMesh(mesh);
   //Set mesh on the second node (Spiderman mesh)
   MyNode2->SetMesh(mesh2);
+  Plane->SetMesh(plane);
   //Adding a light
   Light *MyLight = new Light(Light::LightType::DIRECTIONAL, 0.0f, 0.0f,0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f, 1.0f);
   //Adding the node to the scene
@@ -108,8 +112,10 @@ int main(int argc, char **argv)
   ShaderTy *shad2 = new ShaderTy("./test.vert", "./test.frag");
   MyNode->SetShader(shad);
   MyNode2->SetShader(shad2);
+  Plane->SetShader(shad);
   //Setting node and camera transformations
   MyNode2->SetTransform(0.0f, 0.0f, -0.0f, 0.0f, 0.0f,0.0f,0.0f);
+  Plane->SetTransform(0.0f, -4.0f, 0.0f, 0.0f, 1.0f,0.0f,0.0f);
   MyNode3->SetTransform(0.0f, -4.0f, 0.0f, 0.5f, 0.0f, 0.0f, 1.0f);
   Cam->LookAt(0.0f, 0.0f, -6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
   float xm = 0.0f, ym = 0.0f, zm = 0.0f;
