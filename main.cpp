@@ -82,6 +82,7 @@ int main(int argc, char **argv)
   NodeTy *MyNode3 = SC->CreateNewNodeAndAttach();
   NodeTy *Plane = SC->CreateNewNodeAndAttach();
  
+  //SceneTy::RenderPassTy* RP = SC->CreateNewRenderPass();
   SC->AttachNodeToParentAndDefaultRenderPass(*MyNode2, *MyNode);
   //Creating the camera
   CameraTy *Cam = new CameraTy();

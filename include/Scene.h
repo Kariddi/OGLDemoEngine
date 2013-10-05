@@ -71,6 +71,7 @@ public:
   Node<RendererType>* CreateNewNode();
   Node<RendererType>* CreateNewNodeAndAttach();
   Node<RendererType>* GetRootNode() const { return RootNode; }
+  RenderPassTy* CreateNewRenderPass();
   //void AssociateShader(MeshId mid, Shader sh);
 };
 
@@ -118,6 +119,14 @@ void Scene<RendererType>::UpdateScene(float frame_time_delta) {
   DynWorld->StepWorld(frame_time_delta, 10);
 }
 
+template<typename RendererType>
+typename Scene<RendererType>::RenderPassTy* Scene<RendererType>::CreateNewRenderPass() {
+
+  RenderPassTy* NewRenderPass = new RenderPassTy;
+  RenderPasses.emplace(RenderPasses.begin(), NewRenderPass);
+  return NewRenderPass;
+
+}
 
 template<typename RendererType>
 void Scene<RendererType>::AttachNodeToParent(Node<RendererType>& child, Node<RendererType>& parent) {
@@ -144,7 +153,7 @@ void Scene<RendererType>::AttachNodeToParentAndDefaultRenderPass(Node<RendererTy
   }
   parent.AddChildNode(&child);
   SetRigidBodyForNode(child.GetRigidBody(), &child);
-  RenderPasses[0]->AddObject(&child.GetRenderer());
+  RenderPasses.back()->AddObject(&child.GetRenderer());
   
 }
 

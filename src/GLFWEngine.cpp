@@ -12,6 +12,10 @@ Engine<UBE_GLFW>::~Engine() {
 
   for (auto S : DefaultRenderingTargets)
     delete S;
+  for (auto S : TextureRenderingTargets)
+    delete S;
+  for (auto S : BufferRenderingTargets)
+    delete S;
 
 }
 

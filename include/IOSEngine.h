@@ -22,6 +22,7 @@ class Engine<UBE_IOS> : public BaseEngine<Engine<UBE_IOS>> {
 
   RenderingSurface<RendererTypes::OpenGL>* DefaultSurface;
   BufferRenderingTargetListTy BufferRenderingTargets;
+  TextureRenderingTargetListTy TextureRenderingTargets;
   UIView *IosView;
   GUI* Gui;
   EAGLSystemFacilities Sys;
@@ -57,6 +58,8 @@ public:
       
     for (auto S : BufferRenderingTargets)
       delete S;
+    for (auto S : TextureRenderingTargets)
+      delete S;
   }
 
   GLuint GetFramebuffer() const { return this->Sys.GetDrawFramebufferObject(); }
@@ -65,6 +68,8 @@ public:
   EAGLSystemFacilities *GetSysFacilities() { return static_cast<EAGLSystemFacilities*>(&this->Sys); }
     
   Scene<RendererTypes::OpenGL>* CreateNewScene();
+  template<typename RenderTargetType>
+  RenderingTarget<RendererTypes::OpenGL, RenderTargetType>* CreateNewRenderingTarget(std::uint16_t width, std::uint16_t height, ColorType ct);
     //Renders the loaded scene
   void RenderScene();
 
@@ -81,6 +86,28 @@ public:
 
   void RenderGUI() { Gui->RenderGUI(); }
 };
+
+template<typename RenderTargetTy>
+RenderingTarget<RendererTypes::OpenGL, RenderTargetTy>* Engine<UBE_GLFW>::CreateNewRenderingTarget(std::uint16_t width, std::uint16_t height, ColorType ct) {
+
+  static_assert((std::is_same<RenderTargetTy, RenderTargetType::Texture>::value || 
+                std::is_same<RenderTargetTy, RenderTargetType::Buffer>::value), 
+                "Calling CreateNewRenderingTarget with unsupported target type");
+
+  if (std::is_same<RenderTargetTy, RenderTargetType::Texture>()) {
+    RenderingTarget<RendererTypes::OpenGL, RenderTargetTy>* NewTextureTarget = 
+      new RenderingTarget<RendererTypes::OpenGL, RenderTargetTy>(width, height, ct, NULL);
+    TextureRenderingTargets.push_back(NewTextureTarget);
+    return NewTextureTarget;
+  } else {
+    RenderingTarget<RendererTypes::OpenGL, RenderTargetTy>* NewBufferTarget = 
+      new RenderingTarget<RendererTypes::OpenGL, RenderTargetTy>(width, height, ct);
+    BufferRenderingTargets.push_back(NewBufferTarget);
+    return NewBufferTarget;
+  }
+
+  return NULL;
+}
 
 }
 #endif
