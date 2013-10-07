@@ -9,8 +9,8 @@
 #include <OpenGLES/ES2/glext.h>
 #define OGL_ES
 #else
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
+//#include <OpenGL/gl.h>
+//#include <OpenGL/glext.h>
 #define OGL
 #endif
 
@@ -26,7 +26,7 @@
 #endif
 
 #else
-#include <GL/glew.h>
+#include <glew.h>
 #endif
 
 #endif

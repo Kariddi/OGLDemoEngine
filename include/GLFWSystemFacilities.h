@@ -2,11 +2,9 @@
 #define __UBERNGINE_GLFWSYSTEMFACILITIES_H__
 
 #include <OGLSystemFacilities.h>
+#include <GLFW/glfw3.h>
 #include <functional>
 
-/*namespace {
-  class GLFWwindow;
-}*/
 namespace Uberngine {
 
 class GLFWSystemFacilities : public OGLSystemFacilities<GLFWSystemFacilities> {

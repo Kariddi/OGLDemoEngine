@@ -1,8 +1,8 @@
 #ifndef __UBERNGINE_ENGINE_UBE_GLFW_H__
 #define __UBERNGINE_ENGINE_UBE_GLFW_H__
 //#include <GL/internal.h>
-#include <GLFW/glfw3.h>
 #include <GLFWSystemFacilities.h>
+//#include <GLFW/glfw3.h>
 #include <Renderers/GLRenderingSurface.h>
 #include <Renderers/GLTarget.h>
 #include <Engine.h>

@@ -1,6 +1,7 @@
 #ifndef __UBERNGINE_NODE_H__
 #define __UBERNGINE_NODE_H__
 #include <vector>
+#include <algorithm>
 #include <glm/glm.hpp> //vec3, vec4, ivec4, mat4
 #include <glm/gtc/matrix_transform.hpp> //translate, rotate, scale,
 #include <glm/gtc/type_ptr.hpp> //value_ptr

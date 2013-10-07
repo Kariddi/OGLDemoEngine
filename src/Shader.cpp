@@ -1,3 +1,4 @@
+#include <cstring>
 #include <Shader.h>
 
 using namespace Uberngine;

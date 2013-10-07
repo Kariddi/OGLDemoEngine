@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <iostream>
-#include <GLFW/glfw3.h>
 #include <GLFWSystemFacilities.h>
+#include <GLFW/glfw3.h>
 
 using namespace Uberngine;
 
